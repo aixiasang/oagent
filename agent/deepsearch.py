@@ -1,3 +1,6 @@
+"""
+并不是很成熟
+"""
 from typing import Optional, Dict, List, Any
 from model import OpenaiLLM, Message
 from prompts import DeepResearchPrompts, JinaAgentPrompts
@@ -5,9 +8,10 @@ from tools import *
 import time
 from datetime import datetime
 
+from tools.register import get_registered_tool, get_tool_list
+
 class DeepSearchAgent:
     """深度搜索代理，基于jina-ai/node-DeepResearch架构实现"""
-    
     def __init__(self, llm_config: Optional[Dict] = None, max_iterations: int = 3):
         self.llm = OpenaiLLM(llm_config)
         self.max_iterations = max_iterations
@@ -15,7 +19,7 @@ class DeepSearchAgent:
         self.gathered_info = []
         self.sources = []
         self.tools = get_registered_tools()
-        
+        self.search_tools=get_tool_list(['zhipu_web_search','search_baidu'])
         
     def _get_current_time_context(self) -> str:
         """获取当前时间上下文"""
@@ -60,7 +64,6 @@ class DeepSearchAgent:
         messages = [
             Message.system(system_prompt),
             Message.user(f"""{search_prompt}
-            
 请按照以下步骤执行深度搜索：
 1. 使用所有可用的搜索工具（包括zhipu_web_search、search_wiki等）来查找相关信息
 2. 对每个搜索结果进行分析和总结
@@ -70,28 +73,29 @@ class DeepSearchAgent:
 
 开始搜索并分析内容。""")
         ]
-        
         # 使用所有工具进行搜索 - 启用流式输出
         full_response = ""
-        resp = self.llm.chat(messages=messages, tools=self.tools, tool_choice="auto", stream=True)
-        
+        resp = self.llm.chat(messages=messages, tools=self.search_tools, tool_choice="auto", stream=True)
+        # while True:
         for msg in resp:
             if msg.reasoning_content:
                 self._print_content(msg.reasoning_content)
             if msg.content:
                 self._print_content(msg.content, color="green", bold=True)
                 full_response += msg.content
-                
-            # 记录搜索历史
-            if msg.content:
-                self.search_history.append({
-                    "query": question,
-                    "context": context,
-                    "response": msg.content,
-                    "timestamp": time.time(),
-                    "time_context": time_context
-                })
-        
+        if msg.content:
+            self.search_history.append({
+                "query": question,
+                "context": context,
+                "response": msg.content,
+                "timestamp": time.time(),
+                "time_context": time_context
+            })
+            # if Message.check_tool_result(messages[-1]):
+            #     continue
+            # else:
+            #     break
+            
         return full_response or "搜索未返回结果"
     
     def analyze_and_reason(self, question: str, search_results: str) -> str:
@@ -346,7 +350,7 @@ if __name__ == "__main__":
     # 创建深度搜索代理
     agent = DeepSearchAgent(
         llm_config=get_siliconflow_model(),
-        max_iterations=3  # 增加迭代次数以支持更深度的搜索
+        max_iterations=1  # 增加迭代次数以支持更深度的搜索
     )
     
     print("\n🤖 深度搜索代理已启动!")

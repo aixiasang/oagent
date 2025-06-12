@@ -5,6 +5,7 @@ from typing import Union,Dict,List,Optional,Any
 
 @dataclass
 class Message:
+    """消息会话 实现 简单使用message即可"""
     role:str
     time:datetime=datetime.now()
     content:Optional[Union[str, Dict, List]]=None

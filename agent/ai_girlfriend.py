@@ -1,3 +1,6 @@
+"""
+并不是很成熟
+"""
 import json
 import os
 from datetime import datetime
@@ -20,8 +23,8 @@ class AIGirlfriendAgent(Agent):
     """
     
     def __init__(self, girlfriend_name: str = "美月", personality_traits: str = "", 
-                 memory_file: str = "girlfriend_memory.json"):
-        super().__init__()
+                 memory_file: str = "girlfriend_memory.json",llm_config: Optional[Dict] = None):
+        super().__init__(llm_config=llm_config)
         self.girlfriend_name = girlfriend_name
         self.personality_traits = personality_traits
         self.memory_file = memory_file
@@ -243,8 +246,10 @@ AI：{ai_response}
 
 # 使用示例
 if __name__ == '__main__':
+    from config import get_siliconflow_model
     # 创建AI女友实例
     girlfriend = AIGirlfriendAgent(
+        llm_config=get_siliconflow_model(),
         girlfriend_name="小美",
         personality_traits="温柔体贴，喜欢音乐和绘画，偶尔会撒娇，很关心用户的生活"
     )

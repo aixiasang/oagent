@@ -1,6 +1,3 @@
-# DeepResearch Agent Prompts
-# Based on jina-ai/node-DeepResearch architecture
-
 DEEP_RESEARCH_SYSTEM_PROMPT = r"""
 You are a deep research agent that keeps searching, reading webpages, and reasoning until you find the answer or exceed the token budget.
 

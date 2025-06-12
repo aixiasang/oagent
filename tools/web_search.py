@@ -1,3 +1,4 @@
+import stat
 from sympy import im
 from zhipuai import ZhipuAI
 from .register import register_tool
@@ -17,10 +18,10 @@ def zhipu_web_search(
         "func": "ZhipuAi Web Search",
         "params": {
             "search_query": "需要进行搜索的内容, 建议搜索 query 不超过 78 个字符",
-            "search_egine":"要调用的搜索引擎编码 search_std/search_pro/search_pro_sogou/search_pro_jina/search_pro_bing",
+            "search_egine":"要调用的搜索引擎编码，可以是其中的一个参数search_std/search_pro_sogou/search_pro_jina/search_pro_bing,默认是search_std",
             "count": "返回结果的条数，范围1-50，默认10",
-            "search_domain_filter": "只访问指定域名的内容",
-            "search_recency_filter": "搜索指定日期范围内的内容",
+            "search_domain_filter": "只访问指定域名的内容，默认是空白",
+            "search_recency_filter": "搜索指定日期范围内的内容，默认是无限制",
             "content_size":"控制网页摘要的字数，默认medium"
         }
     }
@@ -192,14 +193,12 @@ def search_baidu( query: str, max_results: int = 10) -> Dict[str, Any]:
     except Exception as e:
         return {"error": f"Baidu scraping error: {e!s}"}
 
+def get_search_web_tools_name():
+    return ['zhipu_web_search', 'search_baidu','search_duckduckgo','search_wiki']
+
 if __name__ == "__main__":
     from .register import get_registered_tools,get_tool_list
     # print(get_tool_list(["search_baidu"]))
     # query="三星手机的最新款"
     # print(zhipu_web_search(query))
     # print(search_baidu(query))
-
-    # print(get_tool_list(["search_bing"]))
-    from .bing import search_bing
-    query="三星手机的最新款"
-    print(search_bing(query))

@@ -7,12 +7,31 @@
 """
 
 import os
+import sys
 import datetime
 import shutil
 import glob
 import platform
 from typing import  Dict, Any
 from .base_tools import register_tool
+
+
+def get_os_info() -> str:
+    os_version=platform.platform()
+    workspace_path=os.getcwd()
+    powshell_path=None
+    if sys.platform == "win32":
+        ps_paths = [
+            os.path.join(os.environ["SystemRoot"], "System32", "WindowsPowerShell", "v1.0", "powershell.exe"),
+            os.path.join(os.environ["SystemRoot"], "SysWOW64", "WindowsPowerShell", "v1.0", "powershell.exe")
+        ]
+        for path in ps_paths:
+            if os.path.exists(path):
+                powshell_path = path
+                break
+        else: 
+            powshell_path = "Unknown"
+    return f"The user's OS version is {os_version}. The absolute path of the user's workspace is {workspace_path}. The user's shell is {powshell_path}."
 
 # ==================== 文件操作工具 ====================
 
@@ -655,7 +674,7 @@ def get_system_info() -> Dict[str, Any]:
             "python_implementation": platform.python_implementation(),
             "current_directory": os.getcwd(),
             "home_directory": os.path.expanduser("~"),
-            "environment_variables": dict(os.environ)
+            # "environment_variables": dict(os.environ) # 环境变量参数获取 禁止获取 可能会泄露隐私信息
         }
     except Exception as e:
         return {
@@ -845,5 +864,4 @@ def test_os_tools():
 
 if __name__ == "__main__":
     test_os_tools()
-    from .register import get_registered_tools
-    print(get_registered_tools())
+   

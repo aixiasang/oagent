@@ -1,9 +1,11 @@
-from ._openai import OpenaiLLM
-from  .base import BaseModel
+from .base import OpenaiLLM
+from .ark import ArkLLM
+from .zhipu import ZhiPuLLm
 from .msg import Message
 
 all=[
     OpenaiLLM,
-    BaseModel,
+    ArkLLM,
+    ZhiPuLLm,
     Message
 ]

@@ -1,3 +1,4 @@
+from arrow import get
 from sympy import im
 from .base_tools import get_weather
 from .register import register_tool,execute_tool,get_registered_tools
@@ -21,6 +22,7 @@ from .with_os import (
     copy_file,
     create_directory,
     delete_directory,
+    get_os_info
 )
 from .web_search import (
     search_baidu,
@@ -71,4 +73,5 @@ all=[
     cmd_run_async,
     python_run_code,
     python_run_file,
+    get_os_info,
 ]

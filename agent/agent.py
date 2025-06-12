@@ -6,7 +6,7 @@ class Agent:
         self.llm=OpenaiLLM(llm_config)
         self.prompt_template=AgentSquadPrompt.get_openai_prompt(name,description)
         self.messages=[Message.system(self.prompt_template)]
-      
+        
     def chat(self, prompt: str, tools: Optional[List[Dict]] = None, tool_choice: str = "auto", stream=True) -> str:
         self.messages.append(Message.user(prompt))
         kwargs = {}
