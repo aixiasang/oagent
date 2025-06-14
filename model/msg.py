@@ -1,13 +1,15 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from datetime import datetime
 import json
 from typing import Union,Dict,List,Optional,Any
+import time
 
 @dataclass
 class Message:
     """消息会话 实现 简单使用message即可"""
     role:str
-    time:datetime=datetime.now()
+    id:str=None
+    created:str=None
     content:Optional[Union[str, Dict, List]]=None
     reasoning_content:Optional[Union[str, Dict, List]]=None
     tool_call_id: Optional[str] = None
@@ -16,6 +18,16 @@ class Message:
     annotations:str=None
     audio:str=None
     function_call:Any=None
+    
+    def to_dict(self):
+        required_fields=['role','content',"tool_call_id","tool_calls","refusal","annotations","audio","function_call"]
+        msg={}
+        for field in required_fields:
+            val=getattr(self,field,None)
+            if val:
+                msg[field]=val
+        return msg
+    
     @staticmethod
     def system(content:str):
         msg={
@@ -32,8 +44,10 @@ class Message:
         return  Message(**msg)
     
     @staticmethod
-    def bot(content:Optional[Union[str, Dict, List]]=None,reasoning_content:Optional[Union[str, Dict, List]]=None,**kwargs):
+    def bot(id:str,created:str,content:Optional[Union[str, Dict, List]]=None,reasoning_content:Optional[Union[str, Dict, List]]=None,**kwargs):
         msg={
+            "id":id,
+            "created":created,
             "role":"assistant",
         }
         if content:
@@ -43,8 +57,10 @@ class Message:
         return  Message(**{**msg,**kwargs})
     
     @staticmethod
-    def tool_call_response(content,tool_calls:List[Dict]):
+    def tool_call_response(id:str,created:str,content,tool_calls:List[Dict]):
         msg={
+            "id":id,
+            "created":created,
             "role":"assistant",
             "content":content,
             'tool_calls':[
@@ -84,6 +100,15 @@ class Message:
         for field in required_fields:
             val=getattr(self,field,None)
             if val:
+                msg[field]=val
+        return msg
+    
+    def to_json(self):
+        """将所有字段转为字典"""
+        msg={}
+        for field in self.__dataclass_fields__:
+            val=getattr(self,field,None)
+            if val is not None:
                 msg[field]=val
         return msg
     

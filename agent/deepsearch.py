@@ -12,8 +12,10 @@ from tools.register import get_registered_tool, get_tool_list
 
 class DeepSearchAgent:
     """深度搜索代理，基于jina-ai/node-DeepResearch架构实现"""
-    def __init__(self, llm_config: Optional[Dict] = None, max_iterations: int = 3):
+    def __init__(self, llm_config: Optional[Dict] = None, name: str = "DeepSearchAgent", description: str = "深度搜索AI助手", max_iterations: int = 3):
         self.llm = OpenaiLLM(llm_config)
+        self.name = name
+        self.description = description
         self.max_iterations = max_iterations
         self.search_history = []
         self.gathered_info = []

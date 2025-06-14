@@ -22,9 +22,10 @@ class AIGirlfriendAgent(Agent):
     支持上下文记忆、情感分析、个性化适应等功能
     """
     
-    def __init__(self, girlfriend_name: str = "美月", personality_traits: str = "", 
-                 memory_file: str = "girlfriend_memory.json",llm_config: Optional[Dict] = None):
-        super().__init__(llm_config=llm_config)
+    def __init__(self, llm_config: Optional[Dict] = None, name: str = "AI女友", description: str = "温柔体贴的AI女友助手",
+                 girlfriend_name: str = "美月", personality_traits: str = "", 
+                 memory_file: str = "girlfriend_memory.json"):
+        super().__init__(llm_config=llm_config, name=name, description=description)
         self.girlfriend_name = girlfriend_name
         self.personality_traits = personality_traits
         self.memory_file = memory_file

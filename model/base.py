@@ -49,22 +49,26 @@ class OpenaiLLM:
             content=''
             reasoning_content=''
             for chunk in resp:
+                id=chunk.id
+                created=chunk.created
                 delta=chunk.choices[0].delta
                 if hasattr(delta,"content") and delta.content:
                     content+=delta.content
-                    yield Message.bot(content=delta.content)
+                    yield Message.bot(id,created,content=delta.content)
                 if hasattr(delta,"reasoning_content") and delta.reasoning_content:
                     reasoning_content+=delta.reasoning_content
-                    yield Message.bot(reasoning_content=delta.reasoning_content)
-            messages.append(Message.bot(content=content,reasoning_content=reasoning_content))
+                    yield Message.bot(id,created,reasoning_content=delta.reasoning_content)
+            messages.append(Message.bot(id,created,content=content,reasoning_content=reasoning_content))
         def _no_stream_chat(resp):
             msg=resp.choices[0].message
+            id=resp.id
+            created=resp.created
             if hasattr(msg, 'content') and msg.content:
                 content=msg.content
             if hasattr(msg, 'reasoning_content') and msg.reasoning_content:
                 reasoning_content=msg.reasoning_content
-            yield Message.bot(content, reasoning_content)
-            messages.append(Message.bot(content, reasoning_content))
+            yield Message.bot(id,created,content, reasoning_content)
+            messages.append(Message.bot(id,created,content, reasoning_content))
         fn=_stream_chat if kwargs.get("stream",False) else _no_stream_chat
         return self._fn_chat(fn,self._chat,**kwargs)
     
@@ -79,15 +83,17 @@ class OpenaiLLM:
             tool_calls = []
             has_tool_calls = False
             for chunk in resp:
+                id = chunk.id
+                created = chunk.created
                 if not chunk.choices:
                     continue
                 delta = chunk.choices[0].delta
                 if hasattr(delta, 'content') and delta.content:
                     content += delta.content
-                    yield Message.bot(content=delta.content)
+                    yield Message.bot(id,created,content=delta.content)
                 if hasattr(delta, 'reasoning_content') and delta.reasoning_content:
                     reasoning_content += delta.reasoning_content
-                    yield Message.bot(content="", reasoning_content=delta.reasoning_content)
+                    yield Message.bot(id,created,content="", reasoning_content=delta.reasoning_content)
                 if hasattr(delta, 'tool_calls') and delta.tool_calls:
                     has_tool_calls = True
                     for tool_call_delta in delta.tool_calls:
@@ -106,7 +112,7 @@ class OpenaiLLM:
                             if hasattr(tool_call_delta.function, 'arguments') and tool_call_delta.function.arguments:
                                 current_tool_call["function"]["arguments"] += tool_call_delta.function.arguments
             if has_tool_calls and tool_calls:
-                msg=Message.tool_call_response(content,tool_calls)
+                msg=Message.tool_call_response(id,created,content,tool_calls)
                 yield msg
                 messages.append(msg)
                 for tool_call in tool_calls:
@@ -124,18 +130,23 @@ class OpenaiLLM:
                     messages.append(tool_result_msg)
             else:
                 msg=Message.bot(
+                    id,
+                    created,
                     content=content,
                     reasoning_content=reasoning_content,
                 )
                 messages.append(msg)
         
         def _no_stream_chat(resp,func_call):
+            id=resp.id
+            created=resp.created
             resp_msg =resp.choices[0].message
             content=resp_msg.content
             reasoning_content=getattr(resp_msg, 'reasoning_content', "") or ""
             func_call_flag=resp.choices[0].finish_reason =="tool_calls"
             if not func_call_flag:
                 curr_msg=Message.bot(
+                    id,created,
                     content=content,
                     reasoning_content=reasoning_content,
                 )
@@ -143,6 +154,8 @@ class OpenaiLLM:
             else:
                 meta_data=resp.choices[0].message.model_dump()
                 msg = Message.bot(
+                    id,
+                    created,
                     **meta_data
                 )
                 messages.append(msg)

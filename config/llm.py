@@ -23,7 +23,7 @@ def get_ali_model():
 def get_siliconflow_model():
     api_key =os.getenv("SILICONFLOW_API_KEY")
     base_url = "https://api.siliconflow.cn/v1"
-    model = "deepseek-ai/DeepSeek-R1"#"THUDM/GLM-Z1-32B-0414"#"deepseek-ai/DeepSeek-R1" #"deepseek-ai/DeepSeek-V3"#
+    model ="Qwen/Qwen3-32B"#
     return get_model(api_key,base_url,model)
 
 def get_ark_model():

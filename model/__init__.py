@@ -3,9 +3,9 @@ from .ark import ArkLLM
 from .zhipu import ZhiPuLLm
 from .msg import Message
 
-all=[
-    OpenaiLLM,
-    ArkLLM,
-    ZhiPuLLm,
-    Message
+__all__ = [
+    'OpenaiLLM',
+    'ArkLLM',
+    'ZhiPuLLm',
+    'Message'
 ]
