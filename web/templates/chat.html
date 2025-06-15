@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 聊天助手</title>
+    <title>禅心AI - 智慧对话</title>
     <style>
         * {
             margin: 0;
@@ -12,195 +12,163 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f7f7f8;
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             height: 100vh;
             margin: 0;
             display: flex;
-        }
-
-        .main-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 260px;
-            background: #171717;
-            display: flex;
             flex-direction: column;
-            border-right: 1px solid #4d4d4f;
-        }
-
-        .sidebar-header {
-            padding: 12px;
-            border-bottom: 1px solid #4d4d4f;
-        }
-
-        .sidebar-header h2 {
-            color: #ececf1;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            text-align: left;
-        }
-
-        .new-session-btn {
-            background: transparent;
-            border: 1px solid #4d4d4f;
-            color: #ececf1;
-            padding: 10px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-            width: 100%;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .new-session-btn:hover {
-            background: #2d2d30;
-        }
-
-        .new-session-btn::before {
-            content: '+';
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .sessions-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px;
-        }
-
-        .session-item {
-            padding: 12px;
-            margin-bottom: 2px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            color: #ececf1;
-            border: none;
-        }
-
-        .session-item:hover {
-            background: #2d2d30;
-        }
-
-        .session-item.active {
-            background: #2d2d30;
-            color: #ececf1;
-        }
-
-        .session-title {
-            font-weight: 400;
-            font-size: 14px;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding-right: 60px;
-        }
-
-        .session-time {
-            font-size: 12px;
-            opacity: 0.6;
-            color: #8e8ea0;
-        }
-
-        .session-actions {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: none;
-            background: #2d2d30;
-            border-radius: 4px;
-            padding: 2px;
-        }
-
-        .session-item:hover .session-actions {
-            display: flex;
-            gap: 2px;
-        }
-
-        .session-action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #ececf1;
-            width: 28px;
-            height: 28px;
-            display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .session-action-btn:hover {
-            background: #4d4d4f;
-        }
-
-        .chat-container {
-            flex: 1;
-            background: white;
+        .zen-container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            height: 80vh;
         }
 
-        .chat-header {
-            background: white;
-            color: #2d333a;
-            padding: 16px 24px;
+        .zen-header {
+            background: linear-gradient(45deg, #d4af37, #f4e4bc);
+            padding: 20px;
             text-align: center;
-            position: relative;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 2px solid #d4af37;
         }
 
-        .chat-header h1 {
-            font-size: 18px;
-            font-weight: 600;
-            margin: 0;
+        .zen-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 15px;
         }
 
-        .clear-btn {
-            position: absolute;
-            right: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: 1px solid #d1d5db;
-            color: #374151;
-            padding: 8px 12px;
-            border-radius: 6px;
+        .zen-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
             cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .clear-btn:hover {
-            background: #f9fafb;
-            border-color: #9ca3af;
+        .zen-icon:hover {
+            transform: translateY(-5px);
+            background: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .zen-icon-label {
+            position: absolute;
+            bottom: -25px;
+            font-size: 12px;
+            color: #8b7355;
+            font-weight: 500;
+        }
+
+        .zen-motto {
+            color: #8b7355;
+            font-size: 16px;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .zen-motto::before {
+            content: '🧘‍♂️';
+            margin-right: 8px;
+        }
+
+        .zen-chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.8);
+            margin: 20px;
+            border-radius: 15px;
+            overflow: hidden;
         }
 
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
+            padding: 20px;
+            background: transparent;
+        }
+
+        .zen-input-container {
+            background: rgba(244, 228, 188, 0.3);
+            padding: 20px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .zen-input-form {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            max-width: 100%;
             background: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .zen-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            resize: none;
+            background: transparent;
+            color: #5a5a5a;
+            min-height: 24px;
+            max-height: 120px;
+            font-family: inherit;
+        }
+
+        .zen-input::placeholder {
+            color: #b8a082;
+            font-style: italic;
+        }
+
+        .zen-send-btn {
+            background: linear-gradient(45deg, #d4af37, #f4e4bc);
+            color: #8b7355;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .zen-send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .zen-send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .message {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             display: flex;
             align-items: flex-start;
             gap: 12px;
@@ -211,50 +179,76 @@
         }
 
         .message.user .message-content {
-            background: #f7f7f8;
-            color: #2d333a;
-            border: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #d4af37, #f4e4bc);
+            color: #8b7355;
+            border: none;
+            box-shadow: 0 3px 10px rgba(212, 175, 55, 0.3);
         }
 
         .message-content {
             max-width: 70%;
-            padding: 16px;
-            border-radius: 12px;
+            padding: 15px 20px;
+            border-radius: 20px;
             word-wrap: break-word;
             line-height: 1.6;
             font-size: 15px;
+            position: relative;
         }
 
         .message.assistant .message-content {
-            background: white;
-            color: #2d333a;
-            border: 1px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.9);
+            color: #5a5a5a;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.assistant .message-content::before {
+            content: '🧘‍♂️';
+            position: absolute;
+            left: -35px;
+            top: 15px;
+            font-size: 20px;
+        }
+
+        .message.user .message-content::before {
+            content: '🙏';
+            position: absolute;
+            right: -35px;
+            top: 15px;
+            font-size: 20px;
         }
 
         .message.tool .message-content {
-            background: #f8f9fa;
-            color: #374151;
-            border: 1px solid #e5e7eb;
+            background: rgba(244, 228, 188, 0.5);
+            color: #8b7355;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
         }
 
         .reasoning-content {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            background: rgba(255, 243, 205, 0.8);
+            border: 1px solid #d4af37;
+            color: #8b7355;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
             font-size: 14px;
             font-style: italic;
         }
 
+        .reasoning-content::before {
+            content: '💭 ';
+            font-style: normal;
+        }
+
         .tool-content {
-            background: #f0f8f0;
+            background: rgba(240, 248, 240, 0.8);
             border: 1px solid #b8e6b8;
             color: #2d5a2d;
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
             font-size: 14px;
             font-family: monospace;
         }
@@ -262,20 +256,20 @@
         .tool-call-content {
             font-family: 'Courier New', monospace;
             white-space: pre-wrap;
-            background-color: #e3f2fd;
-            padding: 8px;
-            border-radius: 4px;
-            margin-top: 5px;
+            background-color: rgba(227, 242, 253, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 8px;
             border-left: 3px solid #2196f3;
         }
         
         .tool-result-content {
             font-family: 'Courier New', monospace;
             white-space: pre-wrap;
-            background-color: #e8f5e8;
-            padding: 8px;
-            border-radius: 4px;
-            margin-top: 5px;
+            background-color: rgba(232, 245, 232, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 8px;
             border-left: 3px solid #4caf50;
         }
 
@@ -431,55 +425,105 @@
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- 侧边栏 -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>💬 会话列表</h2>
-                <button class="new-session-btn" onclick="createNewSession()">+ 新建会话</button>
-            </div>
-            <div class="sessions-list" id="sessionsList">
-                <!-- 会话列表将在这里动态加载 -->
-            </div>
-        </div>
-
-        <!-- 聊天区域 -->
-        <div class="chat-container">
-            <div class="chat-header">
-                <h1 id="chatTitle">🤖 AI 聊天助手</h1>
-                <button class="clear-btn" onclick="clearCurrentSession()">清空对话</button>
-            </div>
-        
-        <div class="chat-messages" id="chatMessages">
-            <div class="message assistant">
-                <div class="message-content">
-                    👋 你好！我是你的AI助手，有什么可以帮助你的吗？
+    <div class="zen-container">
+        <!-- 禅意头部 -->
+        <div class="zen-header">
+            <div class="zen-icons">
+                <div class="zen-icon" title="佛陀" onclick="selectMode('buddha')">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 10 C30 10 15 25 15 45 C15 65 30 80 50 80 C70 80 85 65 85 45 C85 25 70 10 50 10 Z M50 20 C60 20 70 30 70 45 C70 60 60 70 50 70 C40 70 30 60 30 45 C30 30 40 20 50 20 Z"/>
+                        <circle cx="45" cy="40" r="3"/>
+                        <circle cx="55" cy="40" r="3"/>
+                        <path d="M40 55 Q50 65 60 55" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                    <div class="zen-label">佛陀</div>
+                 </div>
+                 
+                <div class="zen-icon" title="禅师" onclick="selectMode('master')">
+                     <svg width="40" height="40" viewBox="0 0 100 100" fill="currentColor">
+                         <path d="M50 15 C35 15 25 25 25 40 L25 75 C25 80 30 85 35 85 L65 85 C70 85 75 80 75 75 L75 40 C75 25 65 15 50 15 Z"/>
+                         <circle cx="42" cy="35" r="2"/>
+                         <circle cx="58" cy="35" r="2"/>
+                         <path d="M40 50 Q50 55 60 50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                         <rect x="45" y="60" width="10" height="15" rx="2"/>
+                     </svg>
+                     <div class="zen-label">禅师</div>
+                 </div>
+                 
+                <div class="zen-icon" title="小沙弥" onclick="selectMode('monk')">
+                     <svg width="40" height="40" viewBox="0 0 100 100" fill="currentColor">
+                         <circle cx="50" cy="35" r="20"/>
+                         <circle cx="44" cy="30" r="2"/>
+                         <circle cx="56" cy="30" r="2"/>
+                         <path d="M42 42 Q50 48 58 42" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                         <rect x="40" y="50" width="20" height="30" rx="3"/>
+                     </svg>
+                     <div class="zen-label">小沙弥</div>
+                 </div>
+                 
+                <div class="zen-icon" title="禅机" onclick="selectMode('wisdom')">
+                     <svg width="40" height="40" viewBox="0 0 100 100" fill="currentColor">
+                         <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="3"/>
+                         <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
+                         <circle cx="50" cy="50" r="5"/>
+                         <path d="M20 50 L35 50 M65 50 L80 50 M50 20 L50 35 M50 65 L50 80" stroke="currentColor" stroke-width="2"/>
+                     </svg>
+                     <div class="zen-label">禅机</div>
+                 </div>
+                 
+                <div class="zen-icon" title="木鱼" onclick="selectMode('meditation')">
+                     <svg width="40" height="40" viewBox="0 0 100 100" fill="currentColor">
+                         <ellipse cx="50" cy="55" rx="25" ry="20"/>
+                         <ellipse cx="50" cy="45" rx="20" ry="15" fill="none" stroke="white" stroke-width="2"/>
+                         <rect x="45" y="25" width="10" height="15" rx="5"/>
+                         <circle cx="50" cy="20" r="3"/>
+                     </svg>
+                     <div class="zen-label">木鱼</div>
                 </div>
             </div>
-        </div>
-        
-        <div class="typing-indicator" id="typingIndicator">
-            <div class="typing-dots">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
+            <div class="zen-motto" id="zenMotto">
+                受尽九磨十难，了知世事无常。
             </div>
         </div>
         
-        <div class="chat-input-container">
-            <form class="chat-input-form" onsubmit="sendMessage(event)">
-                <textarea 
-                    class="chat-input" 
-                    id="messageInput" 
-                    placeholder="输入你的消息..."
-                    rows="1"
-                    onkeydown="handleKeyDown(event)"
-                ></textarea>
-                <button type="submit" class="send-btn" id="sendBtn">
-                    ➤
-                </button>
-            </form>
+        <!-- 聊天区域 -->
+        <div class="zen-chat-area">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant">
+                    <div class="message-content">
+                        🙏 施主，贫僧在此等候多时，有何疑惑需要开解？
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            
+            <!-- 输入区域 -->
+            <div class="zen-input-container">
+                <form class="zen-input-form" onsubmit="sendMessage(event)">
+                    <textarea 
+                        class="zen-input" 
+                        id="messageInput" 
+                        placeholder="点击头像开启对话..."
+                        rows="1"
+                        onkeydown="handleKeyDown(event)"
+                    ></textarea>
+                    <button type="submit" class="zen-send-btn" id="sendBtn">
+                        ➤
+                    </button>
+                </form>
+            </div>
         </div>
+        
+        <!-- 功能按钮 -->
+        <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;">
+            <button onclick="clearCurrentSession()" style="background: rgba(255,255,255,0.8); border: 1px solid #d4af37; color: #8b7355; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px;">🗑️ 轮转</button>
         </div>
     </div>
 
@@ -489,6 +533,74 @@
          const messageElements = new Map(); // 存储消息ID到DOM元素的映射
          let currentSessionId = null;
          let sessions = [];
+
+        // 模式配置
+        const zenModes = {
+            buddha: {
+                motto: '受尽九磨十难，了知世事无常。',
+                placeholder: '施主有何疑惑，请开口相询...',
+                greeting: '🙏 阿弥陀佛，施主，贫僧在此等候多时，有何疑惑需要开解？'
+            },
+            master: {
+                motto: '禅心如水，静观万物。',
+                placeholder: '弟子求教，师父请指点迷津...',
+                greeting: '👨‍🏫 善哉善哉，有缘人来此求法，老衲愿为汝解惑。'
+            },
+            monk: {
+                motto: '初心不改，道心永恒。',
+                placeholder: '小僧有疑，请师兄指教...',
+                greeting: '👶 师兄好，小僧初入佛门，还请多多指教。'
+            },
+            wisdom: {
+                motto: '一花一世界，一叶一菩提。',
+                placeholder: '参悟禅机，求解人生...',
+                greeting: '🎋 万法皆空，因缘和合。施主欲参何机？'
+            },
+            meditation: {
+                motto: '木鱼声声，唤醒迷途。',
+                placeholder: '静心冥想，聆听内心...',
+                greeting: '🥢 咚咚咚... 木鱼声起，心静自然凉。施主可有心事？'
+            }
+        };
+
+        let currentMode = 'buddha';
+
+        // 选择模式
+        function selectMode(mode) {
+            currentMode = mode;
+            const config = zenModes[mode];
+            
+            // 更新格言
+            document.getElementById('zenMotto').textContent = config.motto;
+            
+            // 更新输入框占位符
+            document.getElementById('messageInput').placeholder = config.placeholder;
+            
+            // 清空聊天记录并显示新的问候语
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="message assistant">
+                    <div class="message-content">
+                        ${config.greeting}
+                    </div>
+                </div>
+            `;
+            
+            // 高亮选中的图标
+            document.querySelectorAll('.zen-icon').forEach(icon => {
+                icon.style.background = 'rgba(212, 175, 55, 0.2)';
+            });
+            event.target.closest('.zen-icon').style.background = 'rgba(212, 175, 55, 0.6)';
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化默认模式
+            selectMode('buddha');
+            
+            // 设置第一个图标为选中状态
+            document.querySelector('.zen-icon').style.background = 'rgba(212, 175, 55, 0.6)';
+        });
 
         // 自动调整输入框高度
         const messageInput = document.getElementById('messageInput');

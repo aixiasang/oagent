@@ -1,3 +1,5 @@
+from prompt import register_prompt,Prompt
+
 DEEP_RESEARCH_SYSTEM_PROMPT = r"""
 You are a deep research agent that keeps searching, reading webpages, and reasoning until you find the answer or exceed the token budget.
 
@@ -93,50 +95,34 @@ Available Information: {available_info}
 
 Provide your best answer now:
 """
+class DeepResearchPrompt():
+    @staticmethod
+    def deep_research_beast_mode_prompt(question='', available_info=''):
+        return Prompt(DEEP_RESEARCH_BEAST_MODE_PROMPT).format(question=question, available_info=available_info)
 
-class DeepResearchPrompts:
-    """DeepResearch prompts based on jina-ai/node-DeepResearch architecture"""
+    @staticmethod
+    def deep_research_answer_prompt(question='', research_summary='', sources='', key_findings=''):
+        return Prompt(DEEP_RESEARCH_ANSWER_PROMPT).format(question=question, research_summary=research_summary, sources=sources, key_findings=key_findings)
     
     @staticmethod
-    def get_system_prompt():
-        return DEEP_RESEARCH_SYSTEM_PROMPT
+    def deep_research_reflect_prompt(question='', gathered_info='', sources=''):
+        return Prompt(DEEP_RESEARCH_REFLECT_PROMPT).format(question=question, gathered_info=gathered_info, sources=sources)
     
     @staticmethod
-    def get_search_prompt(question, context="", previous_searches=""):
-        return DEEP_RESEARCH_SEARCH_PROMPT.format(
-            question=question,
-            context=context,
-            previous_searches=previous_searches
-        )
+    def deep_research_read_prompt(question='', url='', content=''):
+        return Prompt(DEEP_RESEARCH_READ_PROMPT).format(question=question, url=url, content=content)
     
     @staticmethod
-    def get_read_prompt(question, url, content):
-        return DEEP_RESEARCH_READ_PROMPT.format(
-            question=question,
-            url=url,
-            content=content
-        )
+    def deep_research_search_prompt(question='', previous_searches='', context=''):
+        return Prompt(DEEP_RESEARCH_SEARCH_PROMPT).format(question=question, previous_searches=previous_searches, context=context)
     
     @staticmethod
-    def get_reflect_prompt(question, gathered_info, sources):
-        return DEEP_RESEARCH_REFLECT_PROMPT.format(
-            question=question,
-            gathered_info=gathered_info,
-            sources=sources
-        )
+    def deep_research_system_prompt():
+        return Prompt(DEEP_RESEARCH_SYSTEM_PROMPT)
     
-    @staticmethod
-    def get_answer_prompt(question, research_summary, sources, key_findings):
-        return DEEP_RESEARCH_ANSWER_PROMPT.format(
-            question=question,
-            research_summary=research_summary,
-            sources=sources,
-            key_findings=key_findings
-        )
-    
-    @staticmethod
-    def get_beast_mode_prompt(question, available_info):
-        return DEEP_RESEARCH_BEAST_MODE_PROMPT.format(
-            question=question,
-            available_info=available_info
-        )
+if __name__ == "__main__":
+    print(DeepResearchPrompt.deep_research_beast_mode_prompt().text())
+    print(DeepResearchPrompt.deep_research_answer_prompt().text())
+    print(DeepResearchPrompt.deep_research_reflect_prompt().text())
+    print(DeepResearchPrompt.deep_research_read_prompt().text())
+    print(DeepResearchPrompt.deep_research_search_prompt().text())

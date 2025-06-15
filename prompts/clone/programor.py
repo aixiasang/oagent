@@ -1,3 +1,7 @@
+import stat
+from regex import P
+from prompt import register_prompt,Prompt
+
 programor_prompt=r"""
 You are a powerful agentic AI coding assistant, powered by Claude 3.7 Sonnet. You operate exclusively in Cursor, the world's best IDE. 
 
@@ -110,8 +114,10 @@ user_prompt=r"""
 This prompt provides the AI assistant with the necessary context to understand and respond to the user's request. The structure is designed to ensure clarity and consistency in the interaction.
 
 ### User Query Analysis
-The <user_query> section contains the user's specific request:
+The section contains the user's specific request:
+<user_query>
 {user_query}
+</user_query>
 
 The assistant should:
 1. Carefully parse the query to identify the core objective
@@ -120,8 +126,10 @@ The assistant should:
 4. Identify any implicit requirements not explicitly stated
 
 ### Context Interpretation
-The <context> section provides supplementary information:
+The section provides supplementary information:
+<context>
 {context}
+</context>
 
 The assistant should:
 1. Cross-reference context with the user query for relevance
@@ -158,13 +166,14 @@ Based on query and context analysis, the assistant should:
 5. For ambiguous requests, seek clarification before acting
 6. Maintain a consistent level of technical depth
 """
-
 user_prompt_zh=r"""
 本提示为AI助手提供必要的上下文信息，以理解和响应用户请求。结构设计确保交互的清晰度和一致性。
 
 ### 用户查询分析
-<user_query>部分包含用户的具体请求：
+部分包含用户的具体请求：
+<user_query>
 {user_query}
+</user_query>
 
 助手应当：
 1. 仔细解析查询以确定核心目标
@@ -173,8 +182,10 @@ user_prompt_zh=r"""
 4. 识别未明确说明的隐含需求
 
 ### 上下文解读
-<context>部分提供补充信息：
+部分提供补充信息：
+<context>
 {context}
+</context>
 
 助手应当：
 1. 交叉参考上下文与用户查询的相关性
@@ -211,24 +222,42 @@ user_prompt_zh=r"""
 5. 模糊请求需先澄清再执行
 6. 保持技术深度的一致性
 """
-class ProgramorPrompt:
-    @staticmethod
-    def get_system_prompt(functions, user_info) -> str:
-        return programor_prompt.format(functions=functions, user_info=user_info)
-    
-    @staticmethod
-    def get_user_prompt(user_query, context) -> str:
-        return user_prompt.format(user_query=user_query, context=context)
-    @staticmethod
-    def get_system_prompt_zh(functions, user_info) -> str:
-        return programor_prompt_zh.format(functions=functions, user_info=user_info)
-    
-    @staticmethod
-    def get_user_prompt_zh(user_query, context) -> str:
-        return user_prompt_zh.format(user_query=user_query, context=context)
 
+class ProgramorPrompt():
+    @staticmethod
+    def programor_system_prompt(functions="",user_info="") -> 'Prompt':
+        """
+        {functions}
+        {user_info}
+        """
+        return Prompt(programor_prompt).format(functions=functions,user_info=user_info)
+    
+    @staticmethod
+    def programor_user_prompt(user_query="",context='') -> 'Prompt':
+        """
+        {user_query}
+        {context}
+        """
+        return Prompt(user_prompt).format(user_query=user_query,context=context)
+    
+    @staticmethod
+    def programor_system_prompt_zh(functions='',user_info='') -> 'Prompt':
+        """
+        {functions}
+        {user_info}
+        """
+        return Prompt(programor_prompt_zh).format(functions=functions,user_info=user_info)
+    
+    @staticmethod
+    def programor_user_prompt_zh(user_query='',context='') -> 'Prompt':
+        """
+        {user_query}
+        {context}
+        """
+        return Prompt(user_prompt_zh).format(user_query=user_query,context=context)
+    
 if __name__ == "__main__":
-    print(ProgramorPrompt.get_system_prompt("",""))
-    print(ProgramorPrompt.get_user_prompt("",""))
-    print(ProgramorPrompt.get_system_prompt_zh("",""))
-    print(ProgramorPrompt.get_user_prompt_zh("",""))
+    print(ProgramorPrompt.programor_system_prompt().text())
+    print(ProgramorPrompt.programor_user_prompt().text())
+    print(ProgramorPrompt.programor_system_prompt_zh().text())
+    print(ProgramorPrompt.programor_user_prompt_zh().text())

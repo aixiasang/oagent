@@ -3,7 +3,7 @@
 """
 from typing import Optional, Dict, List, Any
 from model import OpenaiLLM, Message
-from prompts import DeepResearchPrompts, JinaAgentPrompts
+from prompts import DeepResearchPrompt
 from tools import *
 import time
 from datetime import datetime
@@ -43,16 +43,16 @@ class DeepSearchAgent:
         """使用所有可用的搜索工具进行搜索"""
         # 生成搜索提示，包含时间上下文
         time_context = self._get_current_time_context()
-        search_prompt = DeepResearchPrompts.get_search_prompt(
+        search_prompt = DeepResearchPrompt.deep_research_search_prompt(
             question=question,
             context=f"{time_context}\n{context}",
             previous_searches="\n".join([s["query"] for s in self.search_history])
-        )
+        ).text()
         
         print("\n🔍 正在使用所有搜索工具进行深度搜索...\n")
         
         # 构建系统提示，强调使用所有搜索工具
-        system_prompt = f"""{DeepResearchPrompts.get_system_prompt()}
+        system_prompt = f"""{DeepResearchPrompt.deep_research_system_prompt().text()}
         
 重要指示：
 1. 你必须使用所有可用的搜索工具来获取全面的信息
@@ -103,15 +103,15 @@ class DeepSearchAgent:
     def analyze_and_reason(self, question: str, search_results: str) -> str:
         """分析搜索结果并进行推理"""
         time_context = self._get_current_time_context()
-        read_prompt = DeepResearchPrompts.get_read_prompt(
+        read_prompt =DeepResearchPrompt.deep_research_read_prompt(
             question=question,
             url="综合搜索结果",
             content=search_results
-        )
+        ).txt()
         
         print("\n\n🧠 正在分析和推理...\n")
         
-        system_prompt = f"""{DeepResearchPrompts.get_system_prompt()}
+        system_prompt = f"""{DeepResearchPrompt.deep_research_system_prompt().text()}
         
 分析指导：
 1. 仔细分析所有搜索结果
@@ -155,15 +155,15 @@ class DeepSearchAgent:
         time_context = self._get_current_time_context()
         gathered_info_text = "\n\n".join([info["analysis"] for info in self.gathered_info])
         
-        reflect_prompt = DeepResearchPrompts.get_reflect_prompt(
+        reflect_prompt = DeepResearchPrompt.deep_research_reflect_prompt(
             question=question,
             gathered_info=gathered_info_text,
             sources=f"已搜索 {len(self.search_history)} 次"
-        )
+        ).txt()
         
         print("\n\n🤔 正在反思和规划下一步...\n")
         
-        system_prompt = f"""{DeepResearchPrompts.get_system_prompt()}
+        system_prompt = f"""{DeepResearchPrompt.deep_research_system_prompt().text()}
         
 反思指导：
 1. 评估当前信息的完整性和准确性
@@ -212,21 +212,21 @@ class DeepSearchAgent:
         
         # 使用Beast Mode提示如果搜索次数较多
         if len(self.search_history) >= 5:
-            answer_prompt = DeepResearchPrompts.get_beast_mode_prompt(
+            answer_prompt=DeepResearchPrompt.deep_research_beast_mode_prompt(
                 question=question,
-                available_info=research_summary
-            )
+                available_info=research_summary,
+            ).text()
         else:
-            answer_prompt = DeepResearchPrompts.get_answer_prompt(
+            answer_prompt =DeepResearchPrompt.deep_research_answer_prompt(
                 question=question,
                 research_summary=research_summary,
                 sources=search_summary,
                 key_findings=research_summary
-            )
+            ).text()
         
         print("\n\n✨ 正在生成最终答案...\n")
         
-        system_prompt = f"""{DeepResearchPrompts.get_system_prompt()}
+        system_prompt = f"""{DeepResearchPrompt.deep_research_system_prompt().text()}
         
 答案生成指导：
 1. 基于所有搜索和分析结果提供准确答案

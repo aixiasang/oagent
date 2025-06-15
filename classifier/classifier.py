@@ -1,7 +1,7 @@
 from email import message
 from typing import Dict, Optional,List
 from agent import Agent
-from prompts import AgentSquadPrompt
+from promptsx import AgentSquadPrompt
 from model import Message,OpenaiLLM
 
 class Classifier:

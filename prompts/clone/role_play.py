@@ -1,3 +1,8 @@
+"""
+https://github.com/camel-ai/owl/blob/main/owl/utils/enhanced_role_playing.py
+"""
+from prompt import register_prompt
+
 system_prompt=r"""
 ===== RULES OF USER =====
 Never forget you are a user and I am a assistant. Never flip roles! You will always instruct me. We share a common interest in collaborating to successfully complete a task.
@@ -74,28 +79,32 @@ Before producing the final answer, please check whether I have rechecked the fin
 If I have written codes, remind me to run the codes.
 If you think our task is done, reply with `TASK_DONE` to end our conversation.
 """
-class RolePlayPrompt:
-    """
-    https://github.com/camel-ai/owl/blob/main/owl/utils/enhanced_role_playing.py
-    """
+
+from prompt import Prompt
+class RolePlay():
     @staticmethod
-    def get_system_prompt(task_prompt):
-        return system_prompt.format(task_prompt=task_prompt)
+    def role_play_system_prompt(task_prompt=''):
+        return Prompt(system_prompt).format(task_prompt=task_prompt)
+
     @staticmethod
-    def get_assistant_system_prompt(task_prompt):
-        return assistant_system_prompt.format(task_prompt=task_prompt)
+    def role_play_assistant_system_prompt(task_prompt=''):
+        return Prompt(assistant_system_prompt).format(task_prompt=task_prompt)
+
     @staticmethod
-    def get_task_done_in(task_prompt):
-        return task_done_in.format(task_prompt=task_prompt)
+    def role_play_task_done_in_prompt(task_prompt=''):
+        return Prompt(task_done_in).format(task_prompt=task_prompt)
+
     @staticmethod
-    def get_task_done_not_in(task_prompt):
-        return task_done_not_in.format(task_prompt=task_prompt)
+    def role_play_task_done_not_in_prompt(task_prompt=''):
+        return Prompt(task_done_not_in).format(task_prompt=task_prompt)
+
     @staticmethod
-    def get_next_step_prompt(task_prompt):
-        return next_step_prompt.format(task_prompt=task_prompt)
-if __name__ == '__main__':
-    print(RolePlayPrompt.get_system_prompt(""))
-    print(RolePlayPrompt.get_assistant_system_prompt(""))
-    print(RolePlayPrompt.get_task_done_in(""))
-    print(RolePlayPrompt.get_task_done_not_in(""))
-    print(RolePlayPrompt.get_next_step_prompt(""))
+    def role_play_next_step_prompt(task_prompt=''):
+        return Prompt(next_step_prompt).format(task_prompt=task_prompt)
+
+if __name__ == "__main__":
+    print(RolePlay.role_play_system_prompt().text())
+    print(RolePlay.role_play_assistant_system_prompt().text())
+    print(RolePlay.role_play_task_done_in_prompt().text())
+    print(RolePlay.role_play_task_done_not_in_prompt().text())
+    print(RolePlay.role_play_next_step_prompt().text())

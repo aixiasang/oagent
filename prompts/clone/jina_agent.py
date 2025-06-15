@@ -1,6 +1,3 @@
-# Jina AI Agent Prompts
-# Additional prompts inspired by Jina AI's approach
-
 JINA_AGENT_SYSTEM_PROMPT = r"""
 You are an intelligent research agent powered by Jina AI's technology stack.
 You excel at:
@@ -69,34 +66,27 @@ Format as:
 Formatted Citations:
 """
 
-class JinaAgentPrompts:
-    """Jina AI inspired agent prompts"""
-    
+from prompt import Prompt
+
+class JinaAgentPrompt():
     @staticmethod
-    def get_system_prompt():
-        return JINA_AGENT_SYSTEM_PROMPT
-    
+    def jina_agent_system_prompt(original_query='', context='', intent=''):
+        return Prompt(JINA_AGENT_SYSTEM_PROMPT).format(original_query=original_query, context=context, intent=intent)
+
     @staticmethod
-    def get_query_rewriter_prompt(original_query, context="", intent="general"):
-        return JINA_QUERY_REWRITER_PROMPT.format(
-            original_query=original_query,
-            context=context,
-            intent=intent
-        )
-    
+    def jina_query_rewriter_prompt(original_query='', context='', intent=''):
+        return Prompt(JINA_QUERY_REWRITER_PROMPT).format(original_query=original_query, context=context, intent=intent)
+
     @staticmethod
-    def get_content_analyzer_prompt(query, source_url, content_type, content):
-        return JINA_CONTENT_ANALYZER_PROMPT.format(
-            query=query,
-            source_url=source_url,
-            content_type=content_type,
-            content=content
-        )
-    
+    def jina_content_analyzer_prompt(query='', source_url='', content_type='', content=''):
+        return Prompt(JINA_CONTENT_ANALYZER_PROMPT).format(query=query, source_url=source_url, content_type=content_type, content=content)
+
     @staticmethod
-    def get_citation_formatter_prompt(sources, quotes, context):
-        return JINA_CITATION_FORMATTER_PROMPT.format(
-            sources=sources,
-            quotes=quotes,
-            context=context
-        )
+    def jina_citation_formatter_prompt(sources='', quotes='', context=''):
+        return Prompt(JINA_CITATION_FORMATTER_PROMPT).format(sources=sources, quotes=quotes, context=context)
+
+if __name__ == "__main__":
+    print(JinaAgentPrompt.jina_agent_system_prompt().text())
+    print(JinaAgentPrompt.jina_query_rewriter_prompt().text())
+    print(JinaAgentPrompt.jina_content_analyzer_prompt().text())
+    print(JinaAgentPrompt.jina_citation_formatter_prompt().text())

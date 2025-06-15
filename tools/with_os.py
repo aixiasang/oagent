@@ -15,8 +15,8 @@ import platform
 from typing import  Dict, Any
 from .base_tools import register_tool
 
-
-def get_os_info() -> str:
+@register_tool
+def get_os_info():
     os_version=platform.platform()
     workspace_path=os.getcwd()
     powshell_path=None

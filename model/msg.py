@@ -76,14 +76,6 @@ class Message:
         }
         return  Message(**msg)
     @staticmethod
-    def tool(content:Optional[Union[str, Dict, List]]=None,tool_call_id:Optional[str]=None):
-        msg={
-            "role":"tool",
-            "content":content,
-            "tool_call_id":tool_call_id
-        }
-        return  Message(**msg)
-    @staticmethod
     def tool_result(tool_call_id:str,content:Optional[Union[str, Dict, List]]):
         msg={
             "role":"tool",
@@ -113,7 +105,7 @@ class Message:
         return msg
     
     def __repr__(self):
-        data = self.to_dict()
+        data = self.to_json()
         return json.dumps(data, indent=2,ensure_ascii=False)
 
 
@@ -122,9 +114,6 @@ if __name__ == "__main__":
     print(msg.to_dict())
 
     msg=Message.bot("hello","world")
-    print(msg.to_dict())
-
-    msg=Message.tool("hello","12")
     print(msg.to_dict())
 
     """

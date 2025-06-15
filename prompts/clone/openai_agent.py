@@ -1,3 +1,5 @@
+from prompt import Prompt
+
 openai_prompt=r"""
 You are a {name}.
 {description} Provide helpful and accurate information based on your expertise.
@@ -55,7 +57,7 @@ When communicating with other agents, including the User, please follow these gu
 </guidelines>
 
 <agents_memory>
-{{AGENTS_MEMORY}}
+{agents_memory}
 </agents_memory>
 """
 classifier_prompt=r"""
@@ -71,7 +73,7 @@ If the user's input appears to be a continuation of the previous conversation
 
 Analyze the user's input and categorize it into one of the following agent types:
 <agents>
-{{AGENT_DESCRIPTIONS}}
+{agent_list_str}
 </agents>
 If you are unable to select an agent put "unknown"
 
@@ -99,7 +101,7 @@ treat them as follow-ups and maintain the previous agent selection.
 
 Here is the conversation history that you need to take into account before answering:
 <history>
-{{HISTORY}}
+{history}
 </history>
 
 Examples:
@@ -187,28 +189,24 @@ analyze_prompt_tool={
         },
     },
 }
-class AgentSquadPrompt:
+
+class OpenaiAgentPrompt():
     """
     https://github.com/awslabs/agent-squad
     """
     @staticmethod
-    def get_openai_prompt(name,description):
-        return openai_prompt.format(name=name,description=description)
+    def openai_agent_prompt(name='', description=''):
+        return Prompt(openai_prompt).format(name=name, description=description)
 
     @staticmethod
-    def get_supervisor_prompt(name,description,agent_list_str,tools_str,agent_memory):
-        prompt=supervised_prompt.format(name=name,description=description,agent_list_str=agent_list_str,tools_str=tools_str)  
-        return prompt.replace('{AGENTS_MEMORY}',agent_memory)
-    
+    def supervised_agent_prompt(agent_list_str='', tools_str='', agents_memory=''):
+        return Prompt(supervised_prompt).format(agent_list_str=agent_list_str, tools_str=tools_str, agents_memory=agents_memory)
+
     @staticmethod
-    def get_classification_prompt(agent_descriptions,history):
-        prompt=classifier_prompt.replace('{AGENT_DESCRIPTIONS}',agent_descriptions)
-        return prompt.replace('{HISTORY}',history)
-    @staticmethod
-    def get_analyze_prompt_tool():
-        return [analyze_prompt_tool]
+    def classifier_agent_prompt(agent_list_str='', history=''):
+        return Prompt(classifier_prompt).format(agent_list_str=agent_list_str, history=history)
+
 if __name__ == "__main__":
-    print(AgentSquadPrompt.get_openai_prompt('Agent','Description'))
-    print(AgentSquadPrompt.get_supervisor_prompt('Agent','Description','Agent1','Tool1','Agent1 Memory'))
-    print(AgentSquadPrompt.get_classification_prompt('Agent1: Description1\nAgent2: Description2\nAgent3: Description3', 'History'))
-    print(AgentSquadPrompt.get_analyze_prompt_tool())
+    print(OpenaiAgentPrompt.openai_agent_prompt().text())
+    print(OpenaiAgentPrompt.supervised_agent_prompt().text())
+    print(OpenaiAgentPrompt.classifier_agent_prompt().text())
