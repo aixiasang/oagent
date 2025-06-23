@@ -38,7 +38,6 @@ def get_tool_list(tools:List[Dict]):
 def execute_tool(tool_name: str, arguments: Dict) -> str:
     if tool_name not in registered_tools:
         return f"Error: Tool '{tool_name}' is not registered"
-    
     tool_info = registered_tools[tool_name]
     try:
         result = tool_info["func"](**arguments)
@@ -54,18 +53,13 @@ def register_tool(
     if callable(name):
         func = name
         return register_tool()(func)
-        
     def decorator(func: Callable):
         nonlocal name, description
         tool_name = name or func.__name__
-        
         docstring = func.__doc__ or ""
         tool_description = description or docstring.strip() or f"Function {tool_name}"
-        
-        import re
         json_match = re.search(r'\{.*\}', docstring, re.DOTALL)
         custom_params = {}
-        
         if json_match:
             try:
                 json_def = json.loads(json_match.group())
@@ -76,21 +70,17 @@ def register_tool(
             except json.JSONDecodeError as e:
                 logger.error(f"JSON parse error in {func.__name__} docstring: {e}")
                 raise
-        
         sig = inspect.signature(func)
         parameters = {
             "type": "object",
             "properties": {},
             "required": []
         }
-        
         for param_name, param in sig.parameters.items():
             if param_name == 'self':
                 continue
-                
             if param.default == inspect.Parameter.empty:
                 parameters["required"].append(param_name)
-            
             param_type = "string"  
             if param.annotation != inspect.Parameter.empty:
                 type_map = {
@@ -104,31 +94,24 @@ def register_tool(
                     Dict: "object"
                 }
                 param_type = type_map.get(param.annotation, "string")
-            
             param_description = custom_params.get(param_name, f"Parameter {param_name}")
-            
             parameters["properties"][param_name] = {
                 "type": param_type,
                 "description": param_description
             }
-        
         tool_definition = {
             "name": tool_name,
             "description": tool_description,
             "parameters": parameters
         }
-        
         if tool_name in registered_tools:
             if allow_overwrite:
                 return func
-        
         registered_tools[tool_name] = {
             "def": tool_definition,
             "func": func
         }
-        
         return func
-    
     return decorator
 
 class MCPManager:

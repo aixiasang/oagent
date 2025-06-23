@@ -70,7 +70,7 @@ class Prompt:
         """获取模板的原始文本内容"""
         return self._template
     
-    def txt(self, default: str = "该字段为空") -> str:
+    def txt(self, default: str = "") -> str:
         """
         获取模板内容，未格式化的占位符替换为默认值
         

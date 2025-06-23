@@ -2,23 +2,23 @@ import json
 from .msg import Message
 from typing import Any, Generator, Optional,Dict,Callable,Union,List
 from openai import OpenAI
+import concurrent.futures
 
-def execute_func(tool_call):#tool_name:str,args:dict
+def execute_func(tool_call):
+    tool_result=None
     try:
         from tools import execute_tool
         tool_name = tool_call['function']['name']
         args = json.loads(tool_call['function']['arguments'])
         tool_result = execute_tool(tool_name, args)
-        return str(tool_result)
     except  Exception as e:
-        return f'Error: {str(e)}'
-
+        tool_result=f"error:{e}"
+    return str(tool_result)
 class OpenaiLLM:
     def __init__(self,llm_config:Optional[Dict]=None):
         llm_config = llm_config or {}
         def get_config(cfg_name:str,default={}):
             return llm_config.get(cfg_name,default)
-        
         self.client_cfg = get_config("client_cfg",{})
         self.generation_cfg = get_config("generation_cfg",{})
         self.embedding_cfg = get_config("embedding_cfg",{})
@@ -72,10 +72,10 @@ class OpenaiLLM:
         fn=_stream_chat if kwargs.get("stream",False) else _no_stream_chat
         return self._fn_chat(fn,self._chat,**kwargs)
     
-    def chat(self,messages:list[Message],func_call:Callable=execute_func,**kwargs):
-        return self._base_chat(messages=messages,model=self._chat,func_call=func_call,**kwargs)
+    def chat(self,messages:list[Message],func_call:Callable=execute_func,parallel_tool_calls:bool=True,**kwargs):
+        return self._base_chat(messages=messages,model=self._chat,func_call=func_call,parallel_tool_calls=parallel_tool_calls,**kwargs)
         
-    def _base_chat(self,messages:list[Message],model:Callable,func_call:Callable=execute_func,**kwargs)-> Generator[Message, Any, None]:
+    def _base_chat(self,messages:list[Message],model:Callable,func_call:Callable=execute_func,parallel_tool_calls:bool=True,**kwargs)-> Generator[Message, Any, None]:
         kwargs['messages']=[m.to_dict() for m in messages]
         def _stream_chat(resp,func_call):
             content = ""
@@ -105,7 +105,6 @@ class OpenaiLLM:
                         current_tool_call = tool_calls[tool_call_delta.index]
                         if hasattr(tool_call_delta, 'id') and tool_call_delta.id:
                             current_tool_call["id"] = tool_call_delta.id
-                        """此处的工具调用处理方案仅仅是针对于正确的数据参数传递 以及 工具的调用 以及 工具的返回值 是受限于模型本身"""
                         if hasattr(tool_call_delta, 'function') and tool_call_delta.function:
                             if hasattr(tool_call_delta.function, 'name') and tool_call_delta.function.name:
                                 current_tool_call["function"]["name"] = tool_call_delta.function.name
@@ -115,19 +114,45 @@ class OpenaiLLM:
                 msg=Message.tool_call_response(id,created,content,tool_calls)
                 yield msg
                 messages.append(msg)
-                for tool_call in tool_calls:
-                    tool_result_msg=None
-                    # tool_name = tool_call['function']['name']
-                    # args = json.loads(tool_call['function']['arguments'])
-                    # result_content=func_call_by_tool_call(tool_call)
-                    result_content = func_call(tool_call)
-                    tool_result_msg =Message.tool_result(
-                            tool_call_id=tool_call['id'],
-                            content=result_content
-                        )
-                    
-                    yield tool_result_msg
-                    messages.append(tool_result_msg)
+
+                if parallel_tool_calls:
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                        future_to_tool_call = {executor.submit(func_call, tool_call): tool_call for tool_call in tool_calls}
+                        for future in concurrent.futures.as_completed(future_to_tool_call):
+                            tool_call = future_to_tool_call[future]
+                            try:
+                                result = future.result()
+                                curr_msg = Message.tool_result(
+                                    tool_call_id=tool_call['id'],
+                                    content=str(result)
+                                )
+                                yield curr_msg
+                                messages.append(curr_msg)
+                            except Exception as exc:
+                                curr_msg = Message.tool_result(
+                                    tool_call_id=tool_call['id'],
+                                    content=f'Error: {exc}'
+                                )
+                                yield curr_msg
+                                messages.append(curr_msg)
+                else:
+                    # 顺序执行工具调用
+                    for tool_call in tool_calls:
+                        try:
+                            result = func_call(tool_call)
+                            tool_result_msg = Message.tool_result(
+                                tool_call_id=tool_call['id'],
+                                content=str(result)
+                            )
+                            yield tool_result_msg
+                            messages.append(tool_result_msg)
+                        except Exception as exc:
+                            tool_result_msg = Message.tool_result(
+                                tool_call_id=tool_call['id'],
+                                content=f'Error: {exc}'
+                            )
+                            yield tool_result_msg
+                            messages.append(tool_result_msg)
             else:
                 msg=Message.bot(
                     id,
@@ -136,7 +161,7 @@ class OpenaiLLM:
                     reasoning_content=reasoning_content,
                 )
                 messages.append(msg)
-        
+
         def _no_stream_chat(resp,func_call):
             id=resp.id
             created=resp.created
@@ -151,6 +176,7 @@ class OpenaiLLM:
                     reasoning_content=reasoning_content,
                 )
                 yield curr_msg
+                messages.append(curr_msg)
             else:
                 meta_data=resp.choices[0].message.model_dump()
                 msg = Message.bot(
@@ -158,18 +184,50 @@ class OpenaiLLM:
                     created,
                     **meta_data
                 )
+                yield msg
                 messages.append(msg)
                 tool_calls = resp_msg.tool_calls
-                for tool_call in tool_calls:
-                    tool_name = tool_call.function.name
-                    args = json.loads(tool_call.function.arguments)
-                    result_content = func_call(tool_name, args)
-                    messages.append(
-                        Message.tool_result(
-                            tool_call_id=tool_call.id,
-                            content=result_content
-                        )
-                    )
+                
+                # 根据参数决定是否使用并发调用
+                if parallel_tool_calls:
+                    # 并发执行工具调用
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                        future_to_tool_call = {executor.submit(func_call, tool_call): tool_call for tool_call in tool_calls}
+                        for future in concurrent.futures.as_completed(future_to_tool_call):
+                            tool_call = future_to_tool_call[future]
+                            try:
+                                result = future.result()
+                                curr_msg = Message.tool_result(
+                                    tool_call_id=tool_call.id,
+                                    content=str(result)
+                                )
+                                yield curr_msg
+                                messages.append(curr_msg)
+                            except Exception as exc:
+                                curr_msg = Message.tool_result(
+                                    tool_call_id=tool_call.id,
+                                    content=f'Error: {exc}'
+                                )
+                                yield curr_msg
+                                messages.append(curr_msg)
+                else:
+                    # 顺序执行工具调用
+                    for tool_call in tool_calls:
+                        try:
+                            result_content = func_call(tool_call)
+                            curr_msg = Message.tool_result(
+                                tool_call_id=tool_call.id,
+                                content=str(result_content)
+                            )
+                            yield curr_msg
+                            messages.append(curr_msg)
+                        except Exception as exc:
+                            curr_msg = Message.tool_result(
+                                tool_call_id=tool_call.id,
+                                content=f'Error: {exc}'
+                            )
+                            yield curr_msg
+                            messages.append(curr_msg)
                 
         fn = (lambda resp: _stream_chat(resp, func_call)) if kwargs.get("stream", False) else (lambda resp: _no_stream_chat(resp, func_call))
         return self._fn_chat(fn,model,**kwargs)

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 本地系统工具模块
@@ -15,7 +14,6 @@ import platform
 from typing import  Dict, Any
 from .base_tools import register_tool
 
-@register_tool
 def get_os_info():
     os_version=platform.platform()
     workspace_path=os.getcwd()
@@ -587,7 +585,7 @@ def get_current_time(format_str: str = "%Y-%m-%d %H:%M:%S") -> Dict[str, Any]:
     {
         "func": "获取当前时间",
         "params": {
-            "format_str": "时间格式字符串"
+            "format_str": "时间格式字符串 默认%Y-%m-%d %H:%M:%S 可以不做修改"
         }
     }
     """

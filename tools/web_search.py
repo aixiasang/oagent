@@ -1,8 +1,6 @@
-import stat
-from sympy import im
 from zhipuai import ZhipuAI
 from .register import register_tool
-from typing import Dict, Any, List, cast
+from typing import Dict, Any, List
 import os
 @register_tool
 def zhipu_web_search(
@@ -37,7 +35,7 @@ def zhipu_web_search(
         search_recency_filter=search_recency_filter,
         content_size=content_size
     )
-@register_tool
+# @register_tool
 def search_wiki(entity: str,sentences=10, auto_suggest=False) -> str:
     """
     {
@@ -68,7 +66,7 @@ def search_wiki(entity: str,sentences=10, auto_suggest=False) -> str:
         result = f"An exception occurred during the search: {e}"
 
     return result
-@register_tool
+# @register_tool
 def search_duckduckgo(query: str, source: str = "text", max_results: int = 5
     ) -> List[Dict[str, Any]]:
         """
@@ -136,7 +134,7 @@ def search_duckduckgo(query: str, source: str = "text", max_results: int = 5
                 }
                 responses.append(response)
         return responses
-@register_tool
+# @register_tool
 def search_baidu( query: str, max_results: int = 10) -> Dict[str, Any]:
     """
     {
