@@ -1,0 +1,38 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+*.sqlite3
+*.db
+.env
+.env*
+.venv/
+venv/
+
+# VSCode
+.vscode/
+storage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test output
+htmlcov/
+.coverage
+.tox/
+
+# Local temp
+/temp/
+/storage
