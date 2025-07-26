@@ -156,6 +156,9 @@ class Messages:
     
     def __len__(self) -> int:
         return len(self.messages)
+
+    def __getitem__(self, index):
+        return self.messages[index]
     
     @staticmethod
     def from_json_list(data: List[Dict], system_prompt: Optional[str] = None) -> "Messages":

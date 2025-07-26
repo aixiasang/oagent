@@ -3,7 +3,7 @@ agent_cfg:
 """
 import json
 import os
-from typing import Optional, Dict, List, Callable, Any
+from typing import Generator, Optional, Dict, List, Callable, Any
 from model import Message, OpenaiLLM,Messages
 import uuid
 default_save_path="/agent_save"
@@ -18,14 +18,7 @@ class BaseAgent:
     def chat(self, prompt: str):
         self.messages.add_user_msg(prompt)
         resp=self.llm.chat(self.messages,stream=False)
-        for msg in resp:
-            if msg.role == 'assistant':
-                if msg.reasoning_content:
-                    print(msg.reasoning_content,end="",flush=True)
-                if msg.content:
-                    print(msg.content,end="",flush=True)
-            else:
-                print(msg,end="",flush=True)
+        self._format_resp(resp)
 
     def _to_json(self) -> str:
         return json.dumps({
@@ -34,6 +27,15 @@ class BaseAgent:
             "messages": [msg.to_json() for msg in self.messages]
         }, indent=2, ensure_ascii=False)
 
+    def _format_resp(self,resp:Generator[Message, Any, None]):
+        for msg in resp:
+            if msg.role == 'assistant':
+                if msg.reasoning_content:
+                    print(msg.reasoning_content,end="",flush=True)
+                if msg.content:
+                    print(msg.content,end="",flush=True)
+            else:
+                print(msg,end="",flush=True)
     @classmethod
     def _from_json(cls, js_data: str, llm_cfg: Optional[Dict] = None, save_path: Optional[str] = default_save_path) -> "BaseAgent":
         data = json.loads(js_data)
@@ -56,13 +58,10 @@ class BaseAgent:
         with open(full_path, "r", encoding="utf-8") as f:
             return cls._from_json(f.read(), llm_cfg=llm_cfg, save_path=save_path)
 
-
-def get_tool_descs(tools):
-    tool_descs=[]
-    for tool in tools:
-        content=f'<function>\n{tool}\n</function>\n'
-        tool_descs.append(content)
-    return "<functions>\n"+"".join(tool_descs)+"</functions>"          
+    def last_msg(self) -> str:
+        return self.messages[-1]
+    
+       
     
 if __name__ == "__main__":
     from config import get_siliconflow_model

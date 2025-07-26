@@ -77,18 +77,13 @@ class ReActAgent(BaseAgent):
         return reasoning, actions, final
     
 
-def get_tool_descs(tools):
-    tool_descs=[]
-    for tool in tools:
-        content=f'<function>\n{tool}\n</function>\n'
-        tool_descs.append(content)
-    return "<functions>\n"+"".join(tool_descs)+"</functions>"
 
 
 
 if __name__=='__main__':
     from tools import get_registered_tools
     from config import get_siliconflow_model,get_ark_model
+    from prompt import get_tool_descs
     tools_schema=get_tool_descs(get_registered_tools())
     system_prompt=react_prompt.format(tools=tools_schema)
     llm_cfg=get_siliconflow_model()#get_ark_model()

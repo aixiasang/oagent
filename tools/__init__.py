@@ -8,5 +8,5 @@ all=[
     get_registered_tools,
     get_weather,
     get_os_info,
-    get_current_time
+    get_current_time,
 ]

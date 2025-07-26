@@ -16,7 +16,7 @@ class RolePlayAgent(BaseAgent):
                     print(msg.content,end="",flush=True)
             else:
                 print(msg,end="",flush=True)
-    
+        return self.messages[-1].content
     def _func_chat(self,prompt):
         self.messages.add_user_msg(prompt)
         while True:
@@ -33,16 +33,15 @@ class RolePlayAgent(BaseAgent):
                     print(msg,end="",flush=True)
             if not self.messages.check_tool_result():
                 break
-    
-    def chat(self, prompt):
+        return self.messages[-1].content
+    def chat(self, prompt:str):
         return self._func_chat(prompt) if self.tools else self._no_func_chat(prompt)
     
 
 if __name__=='__main__':
     from tools import get_registered_tools
     from config import get_siliconflow_model,get_ark_model
-    from ._base import get_tool_descs
-    from prompt import miziha_prompt
+    from prompt import miziha_prompt,get_tool_descs
     tools=get_registered_tools()
     tools_schema=get_tool_descs(tools)
     system_prompt=miziha_prompt(tools=tools_schema)
@@ -53,5 +52,7 @@ if __name__=='__main__':
         user_input=input("\nuser:")
         if user_input.lower() in ['q','quit','exit']:
             break
-        roleplay_agent.chat(user_input)
+        fn = getattr(roleplay_agent, 'chat')
+        fn(user_input)
+        # roleplay_agent.chat(user_input)
     print(roleplay_agent.messages)

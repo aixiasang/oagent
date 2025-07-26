@@ -1,3 +1,6 @@
+from typing import Dict, List
+
+
 react_prompt = r"""
 You are an intelligent agent whose core responsibility is to analyze user questions and generate accurate, well-reasoned answers by using registered tools when necessary.
 
@@ -211,3 +214,9 @@ def li_bai_prompt(tools:str):
         """,
         tools=tools
 )
+def get_tool_descs(tools:List[Dict]):
+    tool_descs=[]
+    for tool in tools:
+        content=f'<function>\n{tool}\n</function>\n'
+        tool_descs.append(content)
+    return "<functions>\n"+"".join(tool_descs)+"</functions>"   

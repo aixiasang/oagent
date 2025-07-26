@@ -41,9 +41,19 @@ def get_tools_list(tools:List[str],has_mcp:bool=False) -> List[Dict]:
             })
     return tool_def 
 
-
 def execute_tool(tool_name: str, arguments: Dict) -> str:
     _ok_tool = _search_tool(tool_name)
+    if _ok_tool:
+        tool_info = _ok_tool
+    else:
+        return f"Error: Tool '{tool_name}' not found"
+    try:
+        result = tool_info["fn"](**arguments)
+        return str(result)
+    except Exception as e:
+        return f"Error executing tool {tool_name}: {str(e)}"
+def execute_tool(tool_name: str, arguments: Dict,search_tools:Callable=_search_tool) -> str:
+    _ok_tool = search_tools(tool_name)
     if _ok_tool:
         tool_info = _ok_tool
     else:
@@ -57,14 +67,15 @@ def execute_tool(tool_name: str, arguments: Dict) -> str:
 """
 本地工具注册到local_registered_tools
 """
-def register_tool(
+def _base_regsiter(
     name: Optional[str] = None, 
     description: Optional[str] = None, 
-    allow_overwrite: bool = False
+    allow_overwrite: bool = False,
+    register_map:Dict=_local_registered_tools,
 ):
     if callable(name):
         func = name
-        return register_tool()(func)
+        return _base_regsiter()(func)
     def decorator(func: Callable):
         nonlocal name, description
         tool_name = name or func.__name__
@@ -119,12 +130,19 @@ def register_tool(
         if tool_name in _local_registered_tools and not allow_overwrite:
             if allow_overwrite:
                 return func
-        _local_registered_tools[tool_name] = {
+        register_map[tool_name] = {
             "def": tool_definition,
             "fn": func
         }
         return func
     return decorator
+
+def register_tool(
+    name: Optional[str] = None, 
+    description: Optional[str] = None, 
+    allow_overwrite: bool = False,
+) -> None:
+    return _base_regsiter(name, description, allow_overwrite,register_map=_local_registered_tools)
 
 
 

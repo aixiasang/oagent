@@ -1,6 +1,6 @@
-from ._base import BaseAgent, get_tool_descs
+from ._base import BaseAgent
 from model import Message, OpenaiLLM, Messages,func_call
-from prompt import fncall_prompt
+from prompt import fncall_prompt,get_tool_descs
 from typing import Optional, Dict, List
 
 class FnCallAgent(BaseAgent):
@@ -11,6 +11,7 @@ class FnCallAgent(BaseAgent):
     def chat(self, prompt: str):
         content=f"<user_input>{prompt}</user_input>"
         self.messages.append(Message.user(content))
+        content=''
         while True:
             resp=self.llm.schat(self.messages,stream=True,tools=self.tools,tool_choice='auto')
             content=''
@@ -25,6 +26,7 @@ class FnCallAgent(BaseAgent):
                     print(msg,end="",flush=True)
             if not self.messages.check_tool_result():
                 break
+        return content
 
 
 if __name__=='__main__':
