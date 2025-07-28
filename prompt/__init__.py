@@ -1,5 +1,5 @@
 from ._base import react_prompt,fncall_prompt,miziha_prompt,roleplay_prompt,li_bai_prompt,get_tool_descs
-from ._other import programor_prompt
+from ._other import cursor_agent_prompt as programor_prompt
 from ._rag import rag_prompt
 from ._agents import control_user_prompt,control_system_prompt
 all=[

@@ -75,10 +75,6 @@ class ReActAgent(BaseAgent):
         actions = _actions.group(1).strip() if _actions else ""
         final = _final.group(1).strip() if _final else ""
         return reasoning, actions, final
-    
-
-
-
 
 if __name__=='__main__':
     from tools import get_registered_tools

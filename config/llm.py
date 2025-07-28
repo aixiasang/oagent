@@ -30,7 +30,7 @@ def get_ali_model():
 def get_siliconflow_model():
     api_key=os.getenv("siliconflow_api_key")
     base_url='https://api.siliconflow.cn/v1'
-    model='moonshotai/Kimi-K2-Instruct' #工具调用模型kimi有点偷工减料
+    model="Qwen/Qwen3-235B-A22B-Instruct-2507"#'moonshotai/Kimi-K2-Instruct' #工具调用模型kimi有点偷工减料
     embedding_model="Qwen/Qwen3-Embedding-8B"
     rerank_model="Qwen/Qwen3-Reranker-8B"
     return get_model(api_key,base_url,model,embedding_model,rerank_model)
@@ -38,7 +38,7 @@ def get_siliconflow_model():
 def get_ark_model():
     api_key=os.getenv("ark_api_key")
     base_url = "https://ark.cn-beijing.volces.com/api/v3"
-    model ="doubao-seed-1-6-thinking-250615"
+    model ="kimi-k2-250711"
     embedding_model="doubao-embedding-large-text-250515"
     return get_model(api_key,base_url,model,embedding_model)
 

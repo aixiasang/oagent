@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-本地系统工具模块
-提供与操作系统相关的基本操作功能
-包括文件操作、路径查询、时间操作等
+Local System Tools Module
+Provides basic operating system related operations
+Including file operations, path queries, time operations, etc.
 """
 
 import os
@@ -31,22 +31,22 @@ def get_os_info():
             powshell_path = "Unknown"
     return f"The user's OS version is {os_version}. The absolute path of the user's workspace is {workspace_path}. The user's shell is {powshell_path}."
 
-# ==================== 文件操作工具 ====================
+# ==================== File Operation Tools ====================
 
 @register_tool()
 def create_file(file_path: str, content: str = "", encoding: str = "utf-8") -> Dict[str, Any]:
     """
     {
-        "fn": "创建文件",
+        "fn": "Create File",
         "args": {
-            "file_path": "文件路径",
-            "content": "文件内容，默认为空",
-            "encoding": "文件编码，默认utf-8"
+            "file_path": "File Path",
+            "content": "File Content, Empty by Default",
+            "encoding": "File Encoding, UTF-8 by Default"
         }
     }
     """
     try:
-        # 确保目录存在
+        # Ensure directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         
         with open(file_path, 'w', encoding=encoding) as f:
@@ -54,14 +54,14 @@ def create_file(file_path: str, content: str = "", encoding: str = "utf-8") -> D
         
         return {
             "success": True,
-            "message": f"文件创建成功: {file_path}",
+            "message": f"File created successfully: {file_path}",
             "file_path": file_path,
             "size": len(content.encode(encoding))
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件创建失败: {str(e)}",
+            "message": f"File creation failed: {str(e)}",
             "error": str(e)
         }
 
@@ -69,9 +69,9 @@ def create_file(file_path: str, content: str = "", encoding: str = "utf-8") -> D
 def delete_file(file_path: str) -> Dict[str, Any]:
     """
     {
-        "fn": "删除文件",
+        "fn": "Delete File",
         "args": {
-            "file_path": "文件路径"
+            "file_path": "File Path"
         }
     }
     """
@@ -79,18 +79,18 @@ def delete_file(file_path: str) -> Dict[str, Any]:
         if not os.path.exists(file_path):
             return {
                 "success": False,
-                "message": f"文件不存在: {file_path}"
+                "message": f"File does not exist: {file_path}"
             }
         
         os.remove(file_path)
         return {
             "success": True,
-            "message": f"文件删除成功: {file_path}"
+            "message": f"File deleted successfully: {file_path}"
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件删除失败: {str(e)}",
+            "message": f"File deletion failed: {str(e)}",
             "error": str(e)
         }
 
@@ -98,10 +98,10 @@ def delete_file(file_path: str) -> Dict[str, Any]:
 def read_file(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
     """
     {
-        "fn": "读取文件内容",
+        "fn": "Read File Content",
         "args": {
-            "file_path": "文件路径",
-            "encoding": "文件编码，默认utf-8"
+            "file_path": "File Path",
+            "encoding": "File Encoding, UTF-8 by Default"
         }
     }
     """
@@ -109,7 +109,7 @@ def read_file(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
         if not os.path.exists(file_path):
             return {
                 "success": False,
-                "message": f"文件不存在: {file_path}"
+                "message": f"File does not exist: {file_path}"
             }
         
         with open(file_path, 'r', encoding=encoding) as f:
@@ -117,7 +117,7 @@ def read_file(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
         
         return {
             "success": True,
-            "message": f"文件读取成功: {file_path}",
+            "message": f"File read successfully: {file_path}",
             "content": content,
             "size": len(content.encode(encoding)),
             "lines": len(content.splitlines())
@@ -125,7 +125,7 @@ def read_file(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件读取失败: {str(e)}",
+            "message": f"File read failed: {str(e)}",
             "error": str(e)
         }
 
@@ -133,17 +133,17 @@ def read_file(file_path: str, encoding: str = "utf-8") -> Dict[str, Any]:
 def write_file(file_path: str, content: str, mode: str = "w", encoding: str = "utf-8") -> Dict[str, Any]:
     """
     {
-        "fn": "写入文件内容",
+        "fn": "Write File Content",
         "args": {
-            "file_path": "文件路径",
-            "content": "要写入的内容",
-            "mode": "写入模式 ('w': 覆盖, 'a': 追加)",
-            "encoding": "文件编码，默认utf-8"
+            "file_path": "File Path",
+            "content": "Content to Write",
+            "mode": "Write Mode ('w': Overwrite, 'a': Append)",
+            "encoding": "File Encoding, UTF-8 by Default"
         }
     }
     """
     try:
-        # 确保目录存在
+        # Ensure directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         
         with open(file_path, mode, encoding=encoding) as f:
@@ -151,14 +151,14 @@ def write_file(file_path: str, content: str, mode: str = "w", encoding: str = "u
         
         return {
             "success": True,
-            "message": f"文件写入成功: {file_path}",
+            "message": f"File written successfully: {file_path}",
             "mode": mode,
             "size": len(content.encode(encoding))
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件写入失败: {str(e)}",
+            "message": f"File write failed: {str(e)}",
             "error": str(e)
         }
 
@@ -166,12 +166,12 @@ def write_file(file_path: str, content: str, mode: str = "w", encoding: str = "u
 def edit_file_line(file_path: str, line_number: int, new_content: str, encoding: str = "utf-8") -> Dict[str, Any]:
     """
     {
-        "fn": "编辑文件指定行",
+        "fn": "Edit File Specified Line",
         "args": {
-            "file_path": "文件路径",
-            "line_number": "行号（从1开始）",
-            "new_content": "新的行内容",
-            "encoding": "文件编码，默认utf-8"
+            "file_path": "File Path",
+            "line_number": "Line Number (Starting from 1)",
+            "new_content": "New Line Content",
+            "encoding": "File Encoding, UTF-8 by Default"
         }
     }
     """
@@ -179,33 +179,33 @@ def edit_file_line(file_path: str, line_number: int, new_content: str, encoding:
         if not os.path.exists(file_path):
             return {
                 "success": False,
-                "message": f"文件不存在: {file_path}"
+                "message": f"File does not exist: {file_path}"
             }
         
-        # 读取所有行
+        # Read all lines
         with open(file_path, 'r', encoding=encoding) as f:
             lines = f.readlines()
         
-        # 检查行号有效性
+        # Check line number validity
         if line_number < 1 or line_number > len(lines):
             return {
                 "success": False,
-                "message": f"行号无效: {line_number}，文件共有 {len(lines)} 行"
+                "message": f"Invalid line number: {line_number}, file has {len(lines)} lines"
             }
         
-        # 保存原内容
+        # Save original content
         old_content = lines[line_number - 1].rstrip('\n\r')
         
-        # 修改指定行
+        # Modify specified line
         lines[line_number - 1] = new_content + '\n'
         
-        # 写回文件
+        # Write back to file
         with open(file_path, 'w', encoding=encoding) as f:
             f.writelines(lines)
         
         return {
             "success": True,
-            "message": f"第 {line_number} 行编辑成功",
+            "message": f"Line {line_number} edited successfully",
             "line_number": line_number,
             "old_content": old_content,
             "new_content": new_content
@@ -213,7 +213,7 @@ def edit_file_line(file_path: str, line_number: int, new_content: str, encoding:
     except Exception as e:
         return {
             "success": False,
-            "message": f"行编辑失败: {str(e)}",
+            "message": f"Line editing failed: {str(e)}",
             "error": str(e)
         }
 
@@ -221,13 +221,13 @@ def edit_file_line(file_path: str, line_number: int, new_content: str, encoding:
 def edit_file_lines(file_path: str, start_line: int, end_line: int, new_content: str, encoding: str = "utf-8") -> Dict[str, Any]:
     """
     {
-        "fn": "编辑文件多行内容",
+        "fn": "Edit File Multiple Lines",
         "args": {
-            "file_path": "文件路径",
-            "start_line": "起始行号（从1开始）",
-            "end_line": "结束行号（包含）",
-            "new_content": "新的内容（多行用\\n分隔）",
-            "encoding": "文件编码，默认utf-8"
+            "file_path": "File Path",
+            "start_line": "Start Line Number (Starting from 1)",
+            "end_line": "End Line Number (Inclusive)",
+            "new_content": "New Content (Multiple Lines Separated by \\n)",
+            "encoding": "File Encoding, UTF-8 by Default"
         }
     }
     """
@@ -235,36 +235,36 @@ def edit_file_lines(file_path: str, start_line: int, end_line: int, new_content:
         if not os.path.exists(file_path):
             return {
                 "success": False,
-                "message": f"文件不存在: {file_path}"
+                "message": f"File does not exist: {file_path}"
             }
         
-        # 读取所有行
+        # Read all lines
         with open(file_path, 'r', encoding=encoding) as f:
             lines = f.readlines()
         
-        # 检查行号有效性
+        # Check line number validity
         if start_line < 1 or end_line > len(lines) or start_line > end_line:
             return {
                 "success": False,
-                "message": f"行号范围无效: {start_line}-{end_line}，文件共有 {len(lines)} 行"
+                "message": f"Invalid line range: {start_line}-{end_line}, file has {len(lines)} lines"
             }
         
-        # 保存原内容
+        # Save original content
         old_lines = [line.rstrip('\n\r') for line in lines[start_line-1:end_line]]
         
-        # 准备新内容
+        # Prepare new content
         new_lines = [line + '\n' for line in new_content.split('\n')]
         
-        # 替换指定行范围
+        # Replace specified line range
         lines[start_line-1:end_line] = new_lines
         
-        # 写回文件
+        # Write back to file
         with open(file_path, 'w', encoding=encoding) as f:
             f.writelines(lines)
         
         return {
             "success": True,
-            "message": f"第 {start_line}-{end_line} 行编辑成功",
+            "message": f"Lines {start_line}-{end_line} edited successfully",
             "start_line": start_line,
             "end_line": end_line,
             "old_lines": old_lines,
@@ -273,19 +273,19 @@ def edit_file_lines(file_path: str, start_line: int, end_line: int, new_content:
     except Exception as e:
         return {
             "success": False,
-            "message": f"多行编辑失败: {str(e)}",
+            "message": f"Multi-line editing failed: {str(e)}",
             "error": str(e)
         }
 
-# ==================== 目录操作工具 ====================
+# ==================== Directory Operation Tools ====================
 
 @register_tool
 def create_directory(dir_path: str) -> Dict[str, Any]:
     """
     {
-        "fn": "创建目录",
+        "fn": "Create Directory",
         "args": {
-            "dir_path": "目录路径"
+            "dir_path": "Directory Path"
         }
     }
     """
@@ -293,13 +293,13 @@ def create_directory(dir_path: str) -> Dict[str, Any]:
         os.makedirs(dir_path, exist_ok=True)
         return {
             "success": True,
-            "message": f"目录创建成功: {dir_path}",
+            "message": f"Directory created successfully: {dir_path}",
             "path": dir_path
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"目录创建失败: {str(e)}",
+            "message": f"Directory creation failed: {str(e)}",
             "error": str(e)
         }
 
@@ -307,10 +307,10 @@ def create_directory(dir_path: str) -> Dict[str, Any]:
 def delete_directory(dir_path: str, force: bool = False) -> Dict[str, Any]:
     """
     {
-        "fn": "删除目录",
+        "fn": "Delete Directory",
         "args": {
-            "dir_path": "目录路径",
-            "force": "是否强制删除（删除非空目录）"
+            "dir_path": "Directory Path",
+            "force": "Force Delete (Delete Non-Empty Directory)"
         }
     }
     """
@@ -318,7 +318,7 @@ def delete_directory(dir_path: str, force: bool = False) -> Dict[str, Any]:
         if not os.path.exists(dir_path):
             return {
                 "success": False,
-                "message": f"目录不存在: {dir_path}"
+                "message": f"Directory does not exist: {dir_path}"
             }
         
         if force:
@@ -328,12 +328,12 @@ def delete_directory(dir_path: str, force: bool = False) -> Dict[str, Any]:
         
         return {
             "success": True,
-            "message": f"目录删除成功: {dir_path}"
+            "message": f"Directory deleted successfully: {dir_path}"
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"目录删除失败: {str(e)}",
+            "message": f"Directory deletion failed: {str(e)}",
             "error": str(e)
         }
 
@@ -341,11 +341,11 @@ def delete_directory(dir_path: str, force: bool = False) -> Dict[str, Any]:
 def list_directory(dir_path: str, show_hidden: bool = False, recursive: bool = False) -> Dict[str, Any]:
     """
     {
-        "fn": "列出目录内容",
+        "fn": "List Directory Contents",
         "args": {
-            "dir_path": "目录路径",
-            "show_hidden": "是否显示隐藏文件",
-            "recursive": "是否递归列出子目录"
+            "dir_path": "Directory Path",
+            "show_hidden": "Show Hidden Files",
+            "recursive": "Recursively List Subdirectories"
         }
     }
     """
@@ -353,20 +353,20 @@ def list_directory(dir_path: str, show_hidden: bool = False, recursive: bool = F
         if not os.path.exists(dir_path):
             return {
                 "success": False,
-                "message": f"目录不存在: {dir_path}"
+                "message": f"Directory does not exist: {dir_path}"
             }
         
         if not os.path.isdir(dir_path):
             return {
                 "success": False,
-                "message": f"路径不是目录: {dir_path}"
+                "message": f"Path is not a directory: {dir_path}"
             }
         
         items = []
         
         if recursive:
             for root, dirs, files in os.walk(dir_path):
-                # 处理目录
+                # Process directories
                 for d in dirs:
                     if show_hidden or not d.startswith('.'):
                         full_path = os.path.join(root, d)
@@ -378,7 +378,7 @@ def list_directory(dir_path: str, show_hidden: bool = False, recursive: bool = F
                             "relative_path": rel_path
                         })
                 
-                # 处理文件
+                # Process files
                 for f in files:
                     if show_hidden or not f.startswith('.'):
                         full_path = os.path.join(root, f)
@@ -414,7 +414,7 @@ def list_directory(dir_path: str, show_hidden: bool = False, recursive: bool = F
         
         return {
             "success": True,
-            "message": f"目录列表获取成功: {dir_path}",
+            "message": f"Directory list obtained successfully: {dir_path}",
             "path": dir_path,
             "items": items,
             "count": len(items)
@@ -422,17 +422,17 @@ def list_directory(dir_path: str, show_hidden: bool = False, recursive: bool = F
     except Exception as e:
         return {
             "success": False,
-            "message": f"目录列表获取失败: {str(e)}",
+            "message": f"Directory listing failed: {str(e)}",
             "error": str(e)
         }
 
-# ==================== 路径操作工具 ====================
+# ==================== Path Operation Tools ====================
 
 @register_tool
 def get_current_directory() -> Dict[str, Any]:
     """
     {
-        "fn": "获取当前工作目录",
+        "fn": "Get Current Working Directory",
         "args": {}
     }
     """
@@ -440,14 +440,14 @@ def get_current_directory() -> Dict[str, Any]:
         current_dir = os.getcwd()
         return {
             "success": True,
-            "message": "当前目录获取成功",
+            "message": "Current directory obtained successfully",
             "current_directory": current_dir,
             "absolute_path": os.path.abspath(current_dir)
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"当前目录获取失败: {str(e)}",
+            "message": f"Failed to get current directory: {str(e)}",
             "error": str(e)
         }
 
@@ -455,9 +455,9 @@ def get_current_directory() -> Dict[str, Any]:
 def change_directory(dir_path: str) -> Dict[str, Any]:
     """
     {
-        "fn": "改变当前工作目录",
+        "fn": "Change Current Working Directory",
         "args": {
-            "dir_path": "目标目录路径"
+            "dir_path": "Target Directory Path"
         }
     }
     """
@@ -465,13 +465,13 @@ def change_directory(dir_path: str) -> Dict[str, Any]:
         if not os.path.exists(dir_path):
             return {
                 "success": False,
-                "message": f"目录不存在: {dir_path}"
+                "message": f"Directory does not exist: {dir_path}"
             }
         
         if not os.path.isdir(dir_path):
             return {
                 "success": False,
-                "message": f"路径不是目录: {dir_path}"
+                "message": f"Path is not a directory: {dir_path}"
             }
         
         old_dir = os.getcwd()
@@ -480,14 +480,14 @@ def change_directory(dir_path: str) -> Dict[str, Any]:
         
         return {
             "success": True,
-            "message": f"目录切换成功: {new_dir}",
+            "message": f"Directory changed successfully: {new_dir}",
             "old_directory": old_dir,
             "new_directory": new_dir
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"目录切换失败: {str(e)}",
+            "message": f"Directory change failed: {str(e)}",
             "error": str(e)
         }
 
@@ -495,9 +495,9 @@ def change_directory(dir_path: str) -> Dict[str, Any]:
 def get_absolute_path(path: str) -> Dict[str, Any]:
     """
     {
-        "fn": "获取绝对路径",
+        "fn": "Get Absolute Path",
         "args": {
-            "path": "相对或绝对路径"
+            "path": "Relative or Absolute Path"
         }
     }
     """
@@ -505,7 +505,7 @@ def get_absolute_path(path: str) -> Dict[str, Any]:
         abs_path = os.path.abspath(path)
         return {
             "success": True,
-            "message": "绝对路径获取成功",
+            "message": "Absolute path obtained successfully",
             "input_path": path,
             "absolute_path": abs_path,
             "exists": os.path.exists(abs_path),
@@ -515,7 +515,7 @@ def get_absolute_path(path: str) -> Dict[str, Any]:
     except Exception as e:
         return {
             "success": False,
-            "message": f"绝对路径获取失败: {str(e)}",
+            "message": f"Failed to get absolute path: {str(e)}",
             "error": str(e)
         }
 
@@ -523,11 +523,11 @@ def get_absolute_path(path: str) -> Dict[str, Any]:
 def find_files(pattern: str, search_path: str = ".", recursive: bool = True) -> Dict[str, Any]:
     """
     {
-        "fn": "查找文件",
+        "fn": "Find Files",
         "args": {
-            "pattern": "文件名模式（支持通配符）",
-            "search_path": "搜索路径，默认当前目录",
-            "recursive": "是否递归搜索子目录"
+            "pattern": "File Name Pattern (Supports Wildcards)",
+            "search_path": "Search Path, Current Directory by Default",
+            "recursive": "Recursively Search Subdirectories"
         }
     }
     """
@@ -535,21 +535,21 @@ def find_files(pattern: str, search_path: str = ".", recursive: bool = True) -> 
         if not os.path.exists(search_path):
             return {
                 "success": False,
-                "message": f"搜索路径不存在: {search_path}"
+                "message": f"Search path does not exist: {search_path}"
             }
         
         found_files = []
         
         if recursive:
-            # 递归搜索
+            # Recursive search
             search_pattern = os.path.join(search_path, "**", pattern)
             found_files = glob.glob(search_pattern, recursive=True)
         else:
-            # 只搜索当前目录
+            # Search only current directory
             search_pattern = os.path.join(search_path, pattern)
             found_files = glob.glob(search_pattern)
         
-        # 过滤出文件（排除目录）
+        # Filter out files (exclude directories)
         files_info = []
         for file_path in found_files:
             if os.path.isfile(file_path):
@@ -563,7 +563,7 @@ def find_files(pattern: str, search_path: str = ".", recursive: bool = True) -> 
         
         return {
             "success": True,
-            "message": f"文件搜索完成，找到 {len(files_info)} 个文件",
+            "message": f"File search completed, found {len(files_info)} files",
             "pattern": pattern,
             "search_path": search_path,
             "recursive": recursive,
@@ -573,19 +573,19 @@ def find_files(pattern: str, search_path: str = ".", recursive: bool = True) -> 
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件搜索失败: {str(e)}",
+            "message": f"File search failed: {str(e)}",
             "error": str(e)
         }
 
-# ==================== 时间操作工具 ====================
+# ==================== Time Operation Tools ====================
 
 @register_tool
 def get_current_time(format_str: str = "%Y-%m-%d %H:%M:%S") -> Dict[str, Any]:
     """
     {
-        "fn": "获取当前时间",
+        "fn": "Get Current Time",
         "args": {
-            "format_str": "时间格式字符串 默认%Y-%m-%d %H:%M:%S 可以不做修改"
+            "format_str": "Time Format String Default %Y-%m-%d %H:%M:%S Can Remain Unchanged"
         }
     }
     """
@@ -593,7 +593,7 @@ def get_current_time(format_str: str = "%Y-%m-%d %H:%M:%S") -> Dict[str, Any]:
         now = datetime.datetime.now()
         return {
             "success": True,
-            "message": "当前时间获取成功",
+            "message": "Current time obtained successfully",
             "current_time": now.strftime(format_str),
             "timestamp": now.timestamp(),
             "iso_format": now.isoformat(),
@@ -607,7 +607,7 @@ def get_current_time(format_str: str = "%Y-%m-%d %H:%M:%S") -> Dict[str, Any]:
     except Exception as e:
         return {
             "success": False,
-            "message": f"时间获取失败: {str(e)}",
+            "message": f"Failed to get time: {str(e)}",
             "error": str(e)
         }
 
@@ -615,9 +615,9 @@ def get_current_time(format_str: str = "%Y-%m-%d %H:%M:%S") -> Dict[str, Any]:
 def get_file_times(file_path: str) -> Dict[str, Any]:
     """
     {
-        "fn": "获取文件时间信息",
+        "fn": "Get File Time Information",
         "args": {
-            "file_path": "文件路径"
+            "file_path": "File Path"
         }
     }
     """
@@ -625,14 +625,14 @@ def get_file_times(file_path: str) -> Dict[str, Any]:
         if not os.path.exists(file_path):
             return {
                 "success": False,
-                "message": f"文件不存在: {file_path}"
+                "message": f"File does not exist: {file_path}"
             }
         
         stat = os.stat(file_path)
         
         return {
             "success": True,
-            "message": f"文件时间信息获取成功: {file_path}",
+            "message": f"File time information obtained successfully: {file_path}",
             "file_path": file_path,
             "created_time": datetime.datetime.fromtimestamp(stat.st_ctime).isoformat(),
             "modified_time": datetime.datetime.fromtimestamp(stat.st_mtime).isoformat(),
@@ -644,24 +644,24 @@ def get_file_times(file_path: str) -> Dict[str, Any]:
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件时间信息获取失败: {str(e)}",
+            "message": f"Failed to get file time information: {str(e)}",
             "error": str(e)
         }
 
-# ==================== 系统信息工具 ====================
+# ==================== System Information Tools ====================
 
 @register_tool
 def get_system_info() -> Dict[str, Any]:
     """
     {
-        "fn": "获取系统信息",
+        "fn": "Get System Information",
         "args": {}
     }
     """
     try:
         return {
             "success": True,
-            "message": "系统信息获取成功",
+            "message": "System information obtained successfully",
             "platform": platform.platform(),
             "system": platform.system(),
             "release": platform.release(),
@@ -672,12 +672,12 @@ def get_system_info() -> Dict[str, Any]:
             "python_implementation": platform.python_implementation(),
             "current_directory": os.getcwd(),
             "home_directory": os.path.expanduser("~"),
-            # "environment_variables": dict(os.environ) # 环境变量参数获取 禁止获取 可能会泄露隐私信息
+            # "environment_variables": dict(os.environ) # Environment variable parameter acquisition prohibited may leak privacy information
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"系统信息获取失败: {str(e)}",
+            "message": f"Failed to get system information: {str(e)}",
             "error": str(e)
         }
 
@@ -685,9 +685,9 @@ def get_system_info() -> Dict[str, Any]:
 def get_disk_usage(path: str = ".") -> Dict[str, Any]:
     """
     {
-        "fn": "获取磁盘使用情况",
+        "fn": "Get Disk Usage",
         "args": {
-            "path": "要检查的路径，默认当前目录"
+            "path": "Path to Check, Current Directory by Default"
         }
     }
     """
@@ -695,13 +695,13 @@ def get_disk_usage(path: str = ".") -> Dict[str, Any]:
         if not os.path.exists(path):
             return {
                 "success": False,
-                "message": f"路径不存在: {path}"
+                "message": f"Path does not exist: {path}"
             }
         
         usage = shutil.disk_usage(path)
         
         def format_bytes(bytes_value):
-            """格式化字节数为可读格式"""
+            """Format bytes to readable format"""
             for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
                 if bytes_value < 1024.0:
                     return f"{bytes_value:.2f} {unit}"
@@ -710,7 +710,7 @@ def get_disk_usage(path: str = ".") -> Dict[str, Any]:
         
         return {
             "success": True,
-            "message": f"磁盘使用情况获取成功: {path}",
+            "message": f"Disk usage obtained successfully: {path}",
             "path": path,
             "total_bytes": usage.total,
             "used_bytes": usage.used,
@@ -723,20 +723,20 @@ def get_disk_usage(path: str = ".") -> Dict[str, Any]:
     except Exception as e:
         return {
             "success": False,
-            "message": f"磁盘使用情况获取失败: {str(e)}",
+            "message": f"Failed to get disk usage: {str(e)}",
             "error": str(e)
         }
 
-# ==================== 文件复制移动工具 ====================
+# ==================== File Copy and Move Tools ====================
 
 @register_tool
 def copy_file(src_path: str, dst_path: str) -> Dict[str, Any]:
     """
     {
-        "fn": "复制文件",
+        "fn": "Copy File",
         "args": {
-            "src_path": "源文件路径",
-            "dst_path": "目标文件路径"
+            "src_path": "Source File Path",
+            "dst_path": "Destination File Path"
         }
     }
     """
@@ -744,30 +744,30 @@ def copy_file(src_path: str, dst_path: str) -> Dict[str, Any]:
         if not os.path.exists(src_path):
             return {
                 "success": False,
-                "message": f"源文件不存在: {src_path}"
+                "message": f"Source file does not exist: {src_path}"
             }
         
         if not os.path.isfile(src_path):
             return {
                 "success": False,
-                "message": f"源路径不是文件: {src_path}"
+                "message": f"Source path is not a file: {src_path}"
             }
         
-        # 确保目标目录存在
+        # Ensure destination directory exists
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
         
         shutil.copy2(src_path, dst_path)
         
         return {
             "success": True,
-            "message": f"文件复制成功: {src_path} -> {dst_path}",
+            "message": f"File copied successfully: {src_path} -> {dst_path}",
             "source": src_path,
             "destination": dst_path
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件复制失败: {str(e)}",
+            "message": f"File copy failed: {str(e)}",
             "error": str(e)
         }
 
@@ -775,10 +775,10 @@ def copy_file(src_path: str, dst_path: str) -> Dict[str, Any]:
 def move_file(src_path: str, dst_path: str) -> Dict[str, Any]:
     """
     {
-        "fn": "移动文件",
+        "fn": "Move File",
         "args": {
-            "src_path": "源文件路径",
-            "dst_path": "目标文件路径"
+            "src_path": "Source File Path",
+            "dst_path": "Destination File Path"
         }
     }
     """
@@ -786,79 +786,79 @@ def move_file(src_path: str, dst_path: str) -> Dict[str, Any]:
         if not os.path.exists(src_path):
             return {
                 "success": False,
-                "message": f"源文件不存在: {src_path}"
+                "message": f"Source file does not exist: {src_path}"
             }
         
-        # 确保目标目录存在
+        # Ensure destination directory exists
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
         
         shutil.move(src_path, dst_path)
         
         return {
             "success": True,
-            "message": f"文件移动成功: {src_path} -> {dst_path}",
+            "message": f"File moved successfully: {src_path} -> {dst_path}",
             "source": src_path,
             "destination": dst_path
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"文件移动失败: {str(e)}",
+            "message": f"File move failed: {str(e)}",
             "error": str(e)
         }
 
-# ==================== 测试函数 ====================
+# ==================== Test Functions ====================
 
 def test_os_tools():
     """
-    测试所有操作系统工具函数
+    Test all operating system tool functions
     """
-    print("=== 操作系统工具测试 ===")
+    print("=== Operating System Tools Test ===")
     
-    # 测试文件操作
-    print("\n1. 测试文件操作")
+    # Test file operations
+    print("\n1. Testing file operations")
     test_file = "test_file.txt"
-    test_content = "这是一个测试文件\n第二行内容"
+    test_content = "This is a test file\nSecond line content"
     
-    # 创建文件
+    # Create file
     result = create_file(test_file, test_content)
-    print(f"创建文件: {result}")
+    print(f"Create file: {result}")
     
-    # 读取文件
+    # Read file
     result = read_file(test_file)
-    print(f"读取文件: {result}")
+    print(f"Read file: {result}")
     
-    # 编辑单行
-    result = edit_file_line(test_file, 1, "修改后的第一行")
-    print(f"编辑单行: {result}")
+    # Edit single line
+    result = edit_file_line(test_file, 1, "Modified first line")
+    print(f"Edit single line: {result}")
     
-    # 测试目录操作
-    print("\n2. 测试目录操作")
+    # Test directory operations
+    print("\n2. Testing directory operations")
     test_dir = "test_directory"
     
-    # 创建目录
+    # Create directory
     result = create_directory(test_dir)
-    print(f"创建目录: {result}")
+    print(f"Create directory: {result}")
     
-    # 列出目录
+    # List directory
     result = list_directory(".")
-    print(f"列出目录: {result}")
+    print(f"List directory: {result}")
     
-    # 测试时间操作
-    print("\n3. 测试时间操作")
+    # Test time operations
+    print("\n3. Testing time operations")
     result = get_current_time()
-    print(f"当前时间: {result}")
+    print(f"Current time: {result}")
     
-    # 测试系统信息
-    print("\n4. 测试系统信息")
+    # Test system information
+    print("\n4. Testing system information")
     result = get_system_info()
-    print(f"系统信息: {result}")
+    print(f"System information: {result}")
     
-    # 清理测试文件
+    # Clean up test files
     delete_file(test_file)
     delete_directory(test_dir)
     
-    print("\n=== 测试完成 ===")
+    print("\n=== Test Completed ===")
 
 if __name__ == "__main__":
     test_os_tools()

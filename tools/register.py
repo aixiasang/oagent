@@ -17,12 +17,18 @@ def _get_local_tools():
 def _get_mcp_tools():
     return [{"type": "function", "function": tool["def"]} for tool in _mcp_registered_tools.values()]
 
-def _search_tool(tool_name: str) -> Optional[Dict]:
+def _search_tool(tool_name: str,flag='all') -> Optional[Dict]:
+    
+    result_tools=None
     if tool_name in _local_registered_tools:
-        return _local_registered_tools[tool_name]
+        result_tools=_local_registered_tools[tool_name]
+        if flag=='local':
+            return result_tools
     if tool_name in _mcp_registered_tools:
-        return _mcp_registered_tools[tool_name]
-    return None
+        result_tools=_mcp_registered_tools[tool_name]
+        if flag=='mcp':
+            return result_tools
+    return result_tools
 
 def get_registered_tools() -> List[Dict]:
     return _get_local_tools() + _get_mcp_tools()
@@ -31,9 +37,9 @@ def get_registered_tool(tool_name: str) -> Dict:
     return _search_tool(tool_name) or {}
 
 def get_tools_list(tools:List[str],has_mcp:bool=False) -> List[Dict]:
-    tool_def=_get_local_tools() if has_mcp else []
+    all=tool_def=_get_mcp_tools() if has_mcp else []
     for tool in tools:
-        _target_tool=_search_tool(tool)
+        _target_tool=_search_tool(tool,'local')
         if _target_tool:
             tool_def.append({
                 "type": "function",

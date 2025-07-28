@@ -31,16 +31,19 @@ def get_weather(city: str):
         return f"Could not retrieve weather information for {city}."    
     
 if __name__ == '__main__':
-    from .register import get_registered_tools
+    from .register import get_registered_tools,_search_tool,_get_mcp_tools
     from ._mcp import init_mcp_tools
     mcp_cfg={
-    "mcpServers": {
-        "context7": {
-        "command": "npx",
-        "args": ["-y", "@upstash/context7-mcp"]
-        }
-    }
-    }
-
-    # init_mcp_tools(mcp_cfg)
-    print(get_registered_tools())
+                "mcpServers": {
+                    "sequential-thinking": {
+                        "command": "npx",
+                        "args": [
+                            "-y",
+                            "@modelcontextprotocol/server-sequential-thinking"
+                        ]
+                    }
+                }
+            }
+    init_mcp_tools(mcp_cfg)
+    print(_get_mcp_tools())
+    print(_search_tool('mcp_sequential-thinking_sequentialthinking'))
